@@ -15,7 +15,10 @@
 #'   Default is \code{NULL} since these distances should have already been calculated
 #' @param num.cores see \code{\link{das_effort}}
 #'
-#' @details This function is intended to be called by \code{\link{das_effort}}
+#' @details WARNING - do not call this function directly!
+#'   It is exported for documentation purposes, but is intended for internal package use only.
+#'
+#'   This function is intended to be called by \code{\link{das_effort}}
 #'   when the "condition" method is specified.
 #'   Thus, \code{x} must be filtered for events (rows) where either
 #'   the 'OnEffort' column is \code{TRUE} or the 'Event' column is "E";
@@ -30,8 +33,13 @@
 #'
 #'   Changes in the one of the conditions specified in the \code{conditions}
 #'   argument triggers a new segment.
-#'   The main exception is when multiple condition changes happen at
-#'   the same location, such as a "RPVNW" series of events at the beginning of the effort section.
+#'   One exception is if the event at which this condition change occurs is part of an event series,
+#'   meaning one of several events in a row at the same lat/lon points (such as a PVNW event series).
+#'   In this situation, the final event of the event series is considered the last event
+#'   of the current effort segment, and thus also the start of the next effort segment.
+#'
+#'   Related, when multiple condition changes happen at the same lat/lon points,
+#'   such as a "RPVNW" series of events at the beginning of the effort section.
 #'   When this happens, no segments of length zero are created;
 #'   rather, a single segment is created that includes all of the condition changes
 #'   (i.e. all of the events in the event series) that happened during
@@ -62,8 +70,6 @@
 #'   \item segdata: data frame with one row for each segment, and columns with
 #'     relevant data (see \code{\link{das_effort}} for specifics)
 #' }
-#'
-#' @keywords internal
 #'
 #' @export
 das_chop_condition <- function(x, ...) UseMethod("das_chop_condition")
@@ -101,7 +107,7 @@ das_chop_condition.das_df <- function(x, conditions, seg.min.km = 0.1,
 
   # Determine continuous effort sections
   if (!("cont_eff_section" %in% names(x))) {
-    x$cont_eff_section <- cumsum(x$Event %in% "R")
+    x$cont_eff_section <- cumsum(x$Event %in% c("R", "strataR"))
   }
 
   # Calculate distance between points; checks happen in .dist_from_prev()
@@ -126,7 +132,7 @@ das_chop_condition.das_df <- function(x, conditions, seg.min.km = 0.1,
   #   3) aggregate small segments as specified by user via seg.min.km
 
   eff.uniq <- unique(x$cont_eff_section)
-  stopifnot(length(eff.uniq) == sum(x$Event == "R"))
+  stopifnot(length(eff.uniq) == sum(x$Event %in% c("R", "strataR")))
 
   # Prep for parallel
   call.x <- x
@@ -253,7 +259,7 @@ das_chop_condition.das_df <- function(x, conditions, seg.min.km = 0.1,
   # Get distances of current effort sections
   # Remove last row - there is no next segment to join it with,
   #   even if the last segment is < seg.min.km.
-  #   Becuase of indexing method, the last break point will still be
+  #   Because of indexing method, the last break point will still be
   #   removed to join the final two segments if necessary
   d.pre <- das.df %>%
     group_by(.data$effort_seg_pre) %>%

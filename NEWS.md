@@ -1,8 +1,29 @@
+# swfscDAS 0.5.0 
+
+* Added 'strata.files' argument to `das_effort` to allow users to split effort by strata
+
+* The 'segdata' output of `das_effort` now includes DateTime1 and DateTime2, the date/time of the start and end points of each segment. The column order of the segdata data frame was also slightly changed for consistency
+
+* Using the 'continuous' method of `das_effort`, effort can now also be chopped using 'Course' and 'SptKt'
+
+* Changed the name of the strata argument of `das_intersects_strata` to 'strata.files' for consistency
+
+* Fixed a bug in `das_check` where multiple files could not be checked at once
+
+* `das_check` now checks for valid longitude and latitude values
+
+* Fixed an issue where the sample stratum file did not overlap with any of the sample data
+
+* Added documentation describing how `das_sight` handles additional sperm whale group size estimates
+
+* `das_chop_condition`, `das_chop_equallength`, `das_chop_section`, and `das_segdata` are now exported for documentation purposes only
+
+
 # swfscDAS 0.4.0
 
 * Changed `das_within_strata` to `das_intersects_strata` because it uses the geometric binary predicate `st_intersects` rather than `st_within`
 
-* In `das_effort_sight`, users can now use `gs.columns` tp specify secondary group size columns in case of an `NA` group size value
+* In `das_effort_sight`, users can now use `gs.columns` to specify secondary group size columns in case of an `NA` group size value
 
 
 # swfscDAS 0.3.0

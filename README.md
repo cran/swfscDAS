@@ -5,10 +5,11 @@
 
 <!-- badges: start -->
 
+[![CRAN
+version](http://www.r-pkg.org/badges/version/swfscDAS)](https://cran.r-project.org/package=swfscDAS)
 [![Travis build
 status](https://travis-ci.com/smwoodman/swfscDAS.svg?branch=master)](https://travis-ci.com/smwoodman/swfscDAS)
-[![AppVeyor build
-status](https://ci.appveyor.com/api/projects/status/github/smwoodman/swfscDAS?branch=master&svg=true)](https://ci.appveyor.com/project/smwoodman/swfscDAS)
+<!-- [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/smwoodman/swfscDAS?branch=master&svg=true)](https://ci.appveyor.com/project/smwoodman/swfscDAS) -->
 <!-- badges: end -->
 
 This package contains functions designed for processing and analyzing
@@ -22,7 +23,15 @@ sighting, effort, and comment information. Learn more in
 
 ## Installation
 
-You can install swfscDAS from [GitHub](https://github.com) with:
+You can install the released version of swfscDAS from
+[CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("swfscDAS")
+```
+
+You can install the developmental version of swfscDAS from
+[GitHub](https://github.com) with:
 
 ``` r
 # install.packages("remotes")
@@ -33,10 +42,11 @@ Before installing swfscDAS, you must have
 [R](https://www.r-project.org/),
 [RStudio](https://rstudio.com/products/rstudio/download/#download), and
 the appropriate version of
-[Rtools](https://cran.r-project.org/bin/windows/Rtools/) installed. It
-is best practice to install after closing all instances of R and
-RStudio, and then running the install code from the R GUI rather than
-RStudio. Please contact the developer if you have any issues.
+[Rtools](https://cran.r-project.org/bin/windows/Rtools/) installed. When
+installing the developmental version, it is best practice to install
+after closing all instances of R and RStudio, and then running the
+install code from the R GUI rather than RStudio. Please contact the
+developer if you have any issues.
 
 ## DAS data format
 

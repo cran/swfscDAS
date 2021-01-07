@@ -18,7 +18,10 @@
 #'   Default is \code{NULL} since these distances should have already been calculated
 #' @param num.cores see \code{\link{das_effort}}
 #'
-#' @details This function is intended to be called by \code{\link{das_effort}}
+#' @details WARNING - do not call this function directly!
+#'   It is exported for documentation purposes, but is intended for internal package use only.
+#'
+#'   This function is intended to be called by \code{\link{das_effort}}
 #'   when the "equallength" method is specified.
 #'   Thus, \code{x} must be filtered for events (rows) where either
 #'   the 'OnEffort' column is \code{TRUE} or the 'Event' column is "E";
@@ -85,8 +88,6 @@
 #'     (see Details section above)
 #' }
 #'
-#' @keywords internal
-#'
 #' @export
 das_chop_equallength <- function(x, ...) UseMethod("das_chop_equallength")
 
@@ -129,7 +130,7 @@ das_chop_equallength.das_df <- function(x, conditions, seg.km, randpicks.load = 
 
   # Determine continuous effort sections
   if (!("cont_eff_section" %in% names(x))) {
-    x$cont_eff_section <- cumsum(x$Event %in% "R")
+    x$cont_eff_section <- cumsum(x$Event %in% c("R", "strataR"))
   }
 
 
@@ -175,7 +176,7 @@ das_chop_equallength.das_df <- function(x, conditions, seg.km, randpicks.load = 
   #----------------------------------------------------------------------------
   # Check continuous effort sections against randpicks if applicable
   eff.uniq <- unique(x$cont_eff_section)
-  stopifnot(length(eff.uniq) == sum(x$Event == "R"))
+  stopifnot(length(eff.uniq) == sum(x$Event %in% c("R", "strataR")))
   if (exists("r.eff.sect")) {
     if (length(eff.uniq) != length(r.eff.sect)) {
       stop("The provided DAS data (x) does not have the same number of ",
@@ -189,7 +190,7 @@ das_chop_equallength.das_df <- function(x, conditions, seg.km, randpicks.load = 
 
 
   #----------------------------------------------------------------------------
-  # Parallel thorugh each continuous effort section,
+  # Parallel through each continuous effort section,
   #   getting segment lengths and segdata
   call.x <- x
   call.conditions <- conditions
@@ -234,7 +235,7 @@ das_chop_equallength.das_df <- function(x, conditions, seg.km, randpicks.load = 
   #----------------------------------------------------------------------------
   # Extract information from eff.chop.list, and return
 
-  ### Randpicks; including writing to csv if specified
+  ### Randpicks
   randpicks <- data.frame(
     effort_section = eff.uniq,
     randpicks = vapply(eff.chop.list, function(j) j[["pos"]], 1)
@@ -263,6 +264,25 @@ das_chop_equallength.das_df <- function(x, conditions, seg.km, randpicks.load = 
     warning("The following continuous effort section(s) had a length of zero ",
             "and events between the start and end points: ",
             paste(segs.message, collapse = ", "))
+
+
+  ### Message about segments with length 0 and time diff > 10s
+  ###   Must be outside b/c no messages come out of parallel
+  segs.message.10s <- vapply(eff.chop.list, function(i) {
+    c1 <- isTRUE(.equal(i[["das.df.segdata"]][["dist"]], 0))
+    i.das.dt <- i[["das.df"]][["DateTime"]]
+    c2 <- abs(difftime(i.das.dt[1], tail(i.das.dt, 1), units = "sec")) > 10
+    c1 && c2
+  }, as.logical(1))
+
+  if (sum(segs.message.10s) > 0)
+    warning("The following continuous effort section(s) had a length of zero ",
+            "and events between the start and end points. ",
+            ifelse(sum(segs.message.10s) > 1,
+                   "It is strongly recommended that you review these effort sections in the DAS file: ",
+                   "It is strongly recommended that you review this effort section in the DAS file: "),
+            paste(which(segs.message.10s), collapse = ", "))
+
 
 
   #----------------------------------------------------------------------------
@@ -307,6 +327,7 @@ das_chop_equallength.das_df <- function(x, conditions, seg.km, randpicks.load = 
   seg.dist.mod <- seg.dist %% call.seg.km
 
   seg.0 <- NA
+  seg.0.10s <- NA
 
   # Determine segment lengths
   if (.equal(seg.dist, 0)) {
@@ -316,7 +337,7 @@ das_chop_equallength.das_df <- function(x, conditions, seg.km, randpicks.load = 
     seg.lengths <- 0
     pos <- NA
 
-    # TODO: EAB makes a 0.1km segment if it includes a sighting
+    # EAB makes a 0.1km segment if it includes a sighting
     # if (nrow(das.df) > 2) {
     #   seg.0 <- i
     #   if ("S" %in% das.df$Event)

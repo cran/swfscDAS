@@ -50,7 +50,10 @@ List of two data frames:
 Chop DAS data into a new effort segment every time a specified condition changes
 }
 \details{
-This function is intended to be called by \code{\link{das_effort}}
+WARNING - do not call this function directly!
+  It is exported for documentation purposes, but is intended for internal package use only.
+
+  This function is intended to be called by \code{\link{das_effort}}
   when the "condition" method is specified.
   Thus, \code{x} must be filtered for events (rows) where either
   the 'OnEffort' column is \code{TRUE} or the 'Event' column is "E";
@@ -65,8 +68,13 @@ This function is intended to be called by \code{\link{das_effort}}
 
   Changes in the one of the conditions specified in the \code{conditions}
   argument triggers a new segment.
-  The main exception is when multiple condition changes happen at
-  the same location, such as a "RPVNW" series of events at the beginning of the effort section.
+  One exception is if the event at which this condition change occurs is part of an event series,
+  meaning one of several events in a row at the same lat/lon points (such as a PVNW event series).
+  In this situation, the final event of the event series is considered the last event
+  of the current effort segment, and thus also the start of the next effort segment.
+
+  Related, when multiple condition changes happen at the same lat/lon points,
+  such as a "RPVNW" series of events at the beginning of the effort section.
   When this happens, no segments of length zero are created;
   rather, a single segment is created that includes all of the condition changes
   (i.e. all of the events in the event series) that happened during
@@ -91,4 +99,3 @@ This function is intended to be called by \code{\link{das_effort}}
   If the column \code{dist_from_prev} does not exist, the distance between
   subsequent events is calculated as described in \code{\link{das_effort}}
 }
-\keyword{internal}

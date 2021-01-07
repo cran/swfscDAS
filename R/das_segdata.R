@@ -15,7 +15,10 @@
 #' @param section.id numeric; the ID of \code{x} (the current continuous effort section)
 #' @param ... ignored
 #'
-#' @details This function was designed to be called by one of the das_chop_ functions,
+#' @details WARNING - do not call this function directly!
+#'   It is exported for documentation purposes, but is intended for internal package use only.
+#'
+#'   This function was designed to be called by one of the das_chop_ functions,
 #'   e.g. \code{\link{das_chop_equallength}}, and thus
 #'   users should avoid calling it themselves.
 #'   It loops through the events in \code{x}, chopping \code{x} into modeling segments
@@ -24,13 +27,16 @@
 #'   a "B" or "R" event and end with the corresponding "E" event.
 #'
 #'   For each segment, this function reports the segment number,
-#'   segment ID, cruise number, the start/end/midpoints (lat/lon), segment length,
-#'   year, month, day, time, mode, effort type,
+#'   segment ID, cruise number, the start/end/mid coordinates (lat/lon),
+#'   start/end/mid date/times (DateTime), segment length,
+#'   year, month, day, midpoint time, mode, effort type,
 #'   effective strip width sides (number of sides searched),
 #'   and average conditions (which are specified by \code{conditions}).
 #'   The segment ID is designated as \code{section.id} _ index of the modeling segment.
 #'   Thus, if \code{section.id} is \code{1}, then the segment ID for
 #'   the second segment from \code{x} is \code{"1_2"}.
+#'   The start/end coordinates and date/times are interpolated as needed,
+#'   e.g. when using the 'equallength' method.
 #'
 #'   When \code{segdata.method} is "avg", the condition values are
 #'   calculated as a weighted average by distance.
@@ -55,8 +61,6 @@
 #'
 #' @return Data frame with the segdata information described in Details
 #'   and in \code{\link{das_effort}}
-#'
-#' @keywords internal
 #'
 #' @export
 das_segdata <- function(x, ...) UseMethod("das_segdata")
@@ -124,9 +128,10 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
   segdata.all %>%
     select(.data$seg_idx, .data$section_id, .data$section_sub_id,
            .data$file, .data$stlin, .data$endlin,
-           .data$lat1, .data$lon1, .data$lat2, .data$lon2,
-           .data$mlat, .data$mlon, .data$dist,
-           .data$mDateTime, .data$year, .data$month, .data$day, .data$mtime,
+           .data$lat1, .data$lon1, .data$DateTime1,
+           .data$lat2, .data$lon2, .data$DateTime2,
+           .data$mlat, .data$mlon, .data$mDateTime,
+           .data$dist, .data$year, .data$month, .data$day, .data$mtime,
            everything())
 }
 
@@ -146,6 +151,9 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
                           seg.lengths, section.id, df.out1) {
   #----------------------------------------------------------------------------
   ### Prep
+  # print(paste0(section.id, " | ", das.df$stlin[1]))
+  # if (section.id == 6) browser()
+
   # Conditions list
   conditions.list.init <- lapply(seq_along(conditions), function(i) {
     data.frame(val = NA, dist = 0, stringsAsFactors = FALSE)
@@ -168,13 +176,15 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
   subseg.curr <- 1
   stlin.curr <- das.df$line_num[1]
   startpt.curr <- c(das.df$Lat[1], das.df$Lon[1])
+  startdt.curr <- das.df$DateTime[1]
   midpt.curr <- NULL
   segdata.all <- NULL
 
   conditions.list <- conditions.list.init
 
   if (!(nrow(das.df) >= 2))
-    stop("x must have at least 2 rows; please report this as an issue")
+    stop("Segdata - section ", section.id,
+         " - das.df must have at least 2 rows; please report this as an issue")
 
 
   #----------------------------------------------------------------------------
@@ -188,21 +198,32 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
             warning("The continuous effort section with section_id ",
                     section.id, " has a distance of 0, ",
                     "and multiple values for condition ", k,
-                    ". Only the first element will be output")
+                    ". Only the first element will be output",
+                    immediate. = TRUE)
           if (length(val.out) == 0) NA else val.out
         }, das.df = das.df)
       )
       names(conditions.list.df) <- conditions.names
+
+      enddt.curr <- tail(das.df$DateTime, 1)
+
+      # ### Message printed in das_chop_equallength, outside of parallel calls
+      # dt.test <- identical(startdt.curr, enddt.curr) |
+      #   (abs(difftime(enddt.curr, startdt.curr, units = "sec")) < 10)
+      # if (!dt.test)
+      #   warning("Segdata - section ", section.id, " - this segment is a 0 length segment, ",
+      #           "but spans more than 10 seconds. ",
+      #           "It is strongly recommended that you review this effort section in the DAS file",
+      #           immediate. = TRUE)
 
       segdata.all <- data.frame(
         seg_idx = paste(section.id, 1, sep = "_"),
         section_id = section.id,
         section_sub_id = 1,
         stlin = min(das.df$line_num), endlin = max(das.df$line_num),
-        lat1 = startpt.curr[1], lon1 = startpt.curr[2],
-        lat2 = startpt.curr[1], lon2 = startpt.curr[2],
-        mlat = startpt.curr[1], mlon = startpt.curr[2],
-        mDateTime = das.df$DateTime[1],
+        lat1 = startpt.curr[1], lon1 = startpt.curr[2], DateTime1 = startdt.curr,
+        lat2 = startpt.curr[1], lon2 = startpt.curr[2], DateTime2 = enddt.curr,
+        mlat = startpt.curr[1], mlon = startpt.curr[2], mDateTime = mean(c(startdt.curr, enddt.curr)),
         dist = 0,
         stringsAsFactors = FALSE
       ) %>%
@@ -268,6 +289,13 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
             units = "km", type = "vincenty", distance = d
           )
 
+          ### Get end datetime
+          dt.rat <- if (.equal(das.df$dist_from_prev[j], 0)) 1 else d / das.df$dist_from_prev[j]
+          dt.difftime <- difftime(das.df$DateTime[j], das.df$DateTime[j-1], units = "secs")
+          enddt.curr <- das.df$DateTime[j-1] + (dt.rat * dt.difftime)
+          rm(dt.rat, dt.difftime)
+
+
           ### Conditions and sightings
           #     d.tmp handles multiple segments between pts, aka when current
           #     segment start point is closer than [j-1]
@@ -275,6 +303,7 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
           d.rat <- (dist.subseg.curr - d.tmp) / seg.lengths[subseg.curr]
           # if (is.nan(d.rat)) d.rat <- NA
           conditions.list <- .segdata_aggr(conditions.list, das.df, j-1, d.rat)
+
           rm(d, d.tmp, d.rat)
 
           ## If next point is at the same location, don't end the segment yet
@@ -305,7 +334,7 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
                     mutate(val_frac = .data$val * .data$dist)
 
                   if (nrow(tmp) == 0) NA else sum(tmp$val_frac) / sum(tmp$dist)
-                  # Currently no rounding for comaprison with EAB
+                  # Currently no rounding for comparison with EAB
                   #round(sum(tmp$val_frac) / sum(tmp$dist), 2)
                 }
               }, k.list = conditions.list),
@@ -332,6 +361,7 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
 
           names(conditions.list.df) <- conditions.names
 
+
           # Get start line
           j.stlin.curr <- which(das.df$line_num == stlin.curr)
 
@@ -341,10 +371,9 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
             section_id = section.id,
             section_sub_id = subseg.curr,
             stlin = stlin.curr, endlin = das.df$line_num[j],
-            lat1 = startpt.curr[1], lon1 = startpt.curr[2],
-            lat2 = endpt.curr[1], lon2 = endpt.curr[2],
-            mlat = midpt.curr[1], mlon = midpt.curr[2],
-            mDateTime = mean(c(das.df$DateTime[j.stlin.curr], das.df$DateTime[j])),
+            lat1 = startpt.curr[1], lon1 = startpt.curr[2], DateTime1 = startdt.curr,
+            lat2 = endpt.curr[1], lon2 = endpt.curr[2], DateTime2 = enddt.curr,
+            mlat = midpt.curr[1], mlon = midpt.curr[2], mDateTime = mean(c(startdt.curr, enddt.curr)),
             dist = seg.lengths[subseg.curr],
             stringsAsFactors = FALSE
           ) %>%
@@ -370,8 +399,10 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
 
             # Reset/set points as appropriate
             startpt.curr <- endpt.curr
+            startdt.curr <- enddt.curr
             midpt.curr <- NULL
             endpt.curr <- NULL
+            enddt.curr <- NULL
             stlin.curr <- das.df$line_num[j]
 
             t1 <- .greater_equal(dist.pt.curr, subseg.mid.cumsum[subseg.curr])

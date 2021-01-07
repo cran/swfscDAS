@@ -14,6 +14,7 @@ das_effort(x, ...)
   x,
   method = c("condition", "equallength", "section"),
   conditions = NULL,
+  strata.files = NULL,
   distance.method = c("greatcircle", "lawofcosines", "haversine", "vincenty"),
   seg0.drop = FALSE,
   comment.drop = FALSE,
@@ -37,7 +38,13 @@ or any partial match thereof (case sensitive)}
 These values must be column names from the output of \code{\link{das_process}},
 e.g. 'Bft', 'SwellHght', etc.
 If \code{method == "condition"}, then these also are the conditions which
-trigger segment chopping when they change.}
+trigger segment chopping when they change. Only the following conditions can be used for chopping:
+'Bft', 'SwellHght', 'RainFog', 'HorizSun', 'VertSun', 'Glare', 'Vis', 'Course', 'SpdKt'}
+
+\item{strata.files}{list of path(s) of the CSV file(s) with points defining each stratum.
+The CSV files must contain headers and be a closed polygon.
+The list should be named; see the Details section.
+If \code{NULL} (the default), then no effort segments are not classified by strata.}
 
 \item{distance.method}{character;
 method to use to calculate distance between lat/lon coordinates.
@@ -68,11 +75,17 @@ Using 1 core likely will be faster for smaller datasets}
 List of three data frames:
   \itemize{
     \item segdata: one row for every segment, and columns for information including
-      unique segment number, start/end/midpoint coordinates, and conditions (e.g. Beaufort)
+      unique segment number (segnum), the corresponding effort section (section_id),
+      the segment index within the corresponding effort section (section_sub_id),
+      the starting and ending line of the segment in the DAS file (stlin, endlin),
+      start/end/midpoint coordinates(lat1/lon1, lat2/lon2, and mlat/mlon, respectively),
+      the start/end/midpoint date/time of the segment (DateTime1, DateTime2, and mDateTime, respectively;
+      mDateTime is the average of DateTime1 and DateTime2), segment length (dist),
+      conditions (e.g. Beaufort), and, if applicable, stratum (InStratumName).
     \item sightinfo: details for all sightings in \code{x}, including:
       the unique segment number it is associated with, segment mid points (lat/lon),
       the 'included' column described in the 'Details' section,
-      and the output information described in \code{\link{das_sight}}
+      and the output information described in \code{\link{das_sight}} for \code{return.format} is "default"
     \item randpicks: see \code{\link{das_chop_equallength}};
       \code{NULL} if using "condition" method
   }
@@ -96,9 +109,21 @@ This is the top-level function for chopping processed DAS data
   In addition, all on effort events (other than ? and numeric events)
   with \code{NA} DateTime, Lat, or Lon values are verbosely removed.
 
+  If \code{strata.files} is not \code{NULL}, then the effort lines
+  will be split by the user-provided stratum (strata).
+  In this case, a column 'stratum' will be added to the end of the segdata
+  data frame with the user-provided name of the stratum that the segment was in,
+  or \code{NA} if the segment was not in any of the strata.
+  If no name was provided for the stratum in \code{strata.files},
+  then the value will be "Stratum#",
+  where "#" is the index of the applicable stratum in \code{strata.files}.
+  While the user can provide as many strata as they want,
+  these strata can share boundaries but they cannot overlap.
+  See \code{\link{das_effort_strata}} for more details.
+
   The following chopping methods are currently available:
   "condition", "equallength", and "section.
-  When using the \code{"condition"} method, effort sections are chopped
+  When using the "condition" method, effort sections are chopped
   into segments every time a condition changes,
   thereby ensuring that the conditions are consistent across the entire segment.
   See \code{\link{das_chop_condition}} for more details about this method,
@@ -140,6 +165,9 @@ das_effort(
   seg.min.km = 0.05, num.cores = 1
 )
 
+# Using "section" method
+das_effort(y.proc, method = "section", num.cores = 1)
+
 \donttest{
 # Using "equallength" method
 y.rand <- system.file("das_sample_randpicks.csv", package = "swfscDAS")
@@ -148,8 +176,17 @@ das_effort(
   num.cores = 1
 )
 
-# Using "section" method
-das_effort(y.proc, method = "section", num.cores = 1)
+# Using "section" method and chop by strata
+stratum.file <- system.file("das_sample_stratum.csv", package = "swfscDAS")
+das_effort(
+  y.proc, method = "section", strata.files = list(Poly1 = stratum.file),
+  num.cores = 1
+)
 }
 
+}
+\seealso{
+Internal functions called by \code{das_effort}:
+  \code{\link{das_chop_condition}}, \code{\link{das_chop_equallength}},
+  \code{\link{das_chop_section}}, \code{\link{das_segdata}}
 }

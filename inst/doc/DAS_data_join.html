@@ -14,13 +14,38 @@
 
 <title>Joining DAS outputs with external data</title>
 
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; }
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -30,14 +55,16 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; left: -4em; }
-pre.numberSource a.sourceLine::before
-  { content: attr(title);
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all; display: inline-block;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -46,9 +73,9 @@ pre.numberSource a.sourceLine::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {  }
+  {   }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -102,6 +129,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   }
 })();
 </script>
+
 
 
 
@@ -301,47 +329,47 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(dplyr)</a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="co">#&gt; Attaching package: &#39;dplyr&#39;</span></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="co">#&gt; The following objects are masked from &#39;package:stats&#39;:</span></a>
-<a class="sourceLine" id="cb1-5" title="5"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="co">#&gt;     filter, lag</span></a>
-<a class="sourceLine" id="cb1-7" title="7"><span class="co">#&gt; The following objects are masked from &#39;package:base&#39;:</span></a>
-<a class="sourceLine" id="cb1-8" title="8"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb1-9" title="9"><span class="co">#&gt;     intersect, setdiff, setequal, union</span></a>
-<a class="sourceLine" id="cb1-10" title="10"><span class="kw">library</span>(readr)</a>
-<a class="sourceLine" id="cb1-11" title="11"><span class="kw">library</span>(swfscDAS)</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(dplyr)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="co">#&gt; </span></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co">#&gt; Attaching package: &#39;dplyr&#39;</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#&gt; The following objects are masked from &#39;package:stats&#39;:</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#&gt; </span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="co">#&gt;     filter, lag</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#&gt; The following objects are masked from &#39;package:base&#39;:</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#&gt; </span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="kw">library</span>(readr)</span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="kw">library</span>(swfscDAS)</span></code></pre></div>
 <p>It is common when processing DAS data to use a text-based DAT file to provide additional information. For instance, Ships.dat is used to determine the ship code based on cruise number, while SpCodes.dat is used to match species codes to species names. In this document, we examine how to read in DAT files into R and join them with DAS data. If the exact format of Ships.dat or SpCodes.dat changes in the future, you can change the code introduced in this document to match the new format. Also note that you can use this workflow to join processed DAS data with data from any file type.</p>
 <div id="data" class="section level2">
 <h2>Data</h2>
 <p>First we read in and process the sample DAS data</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1">y &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;das_sample.das&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;swfscDAS&quot;</span>)</a>
-<a class="sourceLine" id="cb2-2" title="2">y.proc &lt;-<span class="st"> </span><span class="kw">das_process</span>(y)</a>
-<a class="sourceLine" id="cb2-3" title="3">y.sight &lt;-<span class="st"> </span><span class="kw">das_sight</span>(y.proc, <span class="dt">return.format =</span> <span class="st">&quot;default&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>y &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;das_sample.das&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;swfscDAS&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a>y.proc &lt;-<span class="st"> </span><span class="kw">das_process</span>(y)</span>
+<span id="cb2-3"><a href="#cb2-3"></a>y.sight &lt;-<span class="st"> </span><span class="kw">das_sight</span>(y.proc, <span class="dt">return.format =</span> <span class="st">&quot;default&quot;</span>)</span></code></pre></div>
 <p>This package includes Ships_sample.dat and SpCodes_sample.dat files, which have the same format as the commonly used Ships.dat and SpCodes.dat files. Because these DAT files are fixed width text files, we use the <code>read_fwf</code> function from the <code>readr</code> package to read the DAT files into data frames. You could also use the <code>read.fwf</code> file from base R. Note that the <code>data.frame</code> call is not necessary if you are comfortable working with tibbles.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1">ships.df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">read_fwf</span>(</a>
-<a class="sourceLine" id="cb3-2" title="2">  <span class="kw">system.file</span>(<span class="st">&quot;Ship_sample.dat&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;swfscDAS&quot;</span>), </a>
-<a class="sourceLine" id="cb3-3" title="3">  <span class="dt">col_positions =</span> <span class="kw">fwf_widths</span>(<span class="kw">c</span>(<span class="dv">6</span>, <span class="ot">NA</span>), <span class="dt">col_names =</span> <span class="kw">c</span>(<span class="st">&quot;Cruise&quot;</span>, <span class="st">&quot;Ship&quot;</span>)),</a>
-<a class="sourceLine" id="cb3-4" title="4">  <span class="dt">col_types =</span> <span class="kw">cols</span>(<span class="dt">Cruise =</span> <span class="kw">col_double</span>(), <span class="dt">Ship =</span> <span class="kw">col_character</span>()),</a>
-<a class="sourceLine" id="cb3-5" title="5">  <span class="dt">trim_ws =</span> <span class="ot">TRUE</span></a>
-<a class="sourceLine" id="cb3-6" title="6">), <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb3-7" title="7"></a>
-<a class="sourceLine" id="cb3-8" title="8">spcodes.df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">read_fwf</span>(</a>
-<a class="sourceLine" id="cb3-9" title="9">  <span class="kw">system.file</span>(<span class="st">&quot;SpCodes_sample.dat&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;swfscDAS&quot;</span>), </a>
-<a class="sourceLine" id="cb3-10" title="10">  <span class="dt">col_positions =</span> <span class="kw">fwf_widths</span>(<span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">13</span>, <span class="dv">40</span>, <span class="ot">NA</span>),  <span class="dt">col_names =</span> <span class="kw">c</span>(<span class="st">&quot;SpCode&quot;</span>, <span class="st">&quot;Abbr&quot;</span>, <span class="st">&quot;SciName&quot;</span>, <span class="st">&quot;CommonName&quot;</span>)),</a>
-<a class="sourceLine" id="cb3-11" title="11">  <span class="dt">col_types =</span> <span class="kw">cols</span>(<span class="dt">.default =</span> <span class="kw">col_character</span>()),</a>
-<a class="sourceLine" id="cb3-12" title="12">  <span class="dt">trim_ws =</span> <span class="ot">TRUE</span></a>
-<a class="sourceLine" id="cb3-13" title="13">), <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>ships.df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">read_fwf</span>(</span>
+<span id="cb3-2"><a href="#cb3-2"></a>  <span class="kw">system.file</span>(<span class="st">&quot;Ship_sample.dat&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;swfscDAS&quot;</span>), </span>
+<span id="cb3-3"><a href="#cb3-3"></a>  <span class="dt">col_positions =</span> <span class="kw">fwf_widths</span>(<span class="kw">c</span>(<span class="dv">6</span>, <span class="ot">NA</span>), <span class="dt">col_names =</span> <span class="kw">c</span>(<span class="st">&quot;Cruise&quot;</span>, <span class="st">&quot;Ship&quot;</span>)),</span>
+<span id="cb3-4"><a href="#cb3-4"></a>  <span class="dt">col_types =</span> <span class="kw">cols</span>(<span class="dt">Cruise =</span> <span class="kw">col_double</span>(), <span class="dt">Ship =</span> <span class="kw">col_character</span>()),</span>
+<span id="cb3-5"><a href="#cb3-5"></a>  <span class="dt">trim_ws =</span> <span class="ot">TRUE</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a>), <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</span>
+<span id="cb3-7"><a href="#cb3-7"></a></span>
+<span id="cb3-8"><a href="#cb3-8"></a>spcodes.df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">read_fwf</span>(</span>
+<span id="cb3-9"><a href="#cb3-9"></a>  <span class="kw">system.file</span>(<span class="st">&quot;SpCodes_sample.dat&quot;</span>, <span class="dt">package =</span> <span class="st">&quot;swfscDAS&quot;</span>), </span>
+<span id="cb3-10"><a href="#cb3-10"></a>  <span class="dt">col_positions =</span> <span class="kw">fwf_widths</span>(<span class="kw">c</span>(<span class="dv">4</span>, <span class="dv">13</span>, <span class="dv">40</span>, <span class="ot">NA</span>),  <span class="dt">col_names =</span> <span class="kw">c</span>(<span class="st">&quot;SpCode&quot;</span>, <span class="st">&quot;Abbr&quot;</span>, <span class="st">&quot;SciName&quot;</span>, <span class="st">&quot;CommonName&quot;</span>)),</span>
+<span id="cb3-11"><a href="#cb3-11"></a>  <span class="dt">col_types =</span> <span class="kw">cols</span>(<span class="dt">.default =</span> <span class="kw">col_character</span>()),</span>
+<span id="cb3-12"><a href="#cb3-12"></a>  <span class="dt">trim_ws =</span> <span class="ot">TRUE</span></span>
+<span id="cb3-13"><a href="#cb3-13"></a>), <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)</span></code></pre></div>
 </div>
 <div id="join-data" class="section level2">
 <h2>Join data</h2>
 <p>Now that we have both the DAS data and external data in data frames, we can use the the dplyr package, and specifically the <code>left_join</code> function, to combine the data</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="co"># Ship </span></a>
-<a class="sourceLine" id="cb4-2" title="2">y.proc.ship &lt;-<span class="st"> </span><span class="kw">left_join</span>(y.proc, ships.df, <span class="dt">by =</span> <span class="st">&quot;Cruise&quot;</span>)</a>
-<a class="sourceLine" id="cb4-3" title="3"></a>
-<a class="sourceLine" id="cb4-4" title="4"><span class="co"># Species code</span></a>
-<a class="sourceLine" id="cb4-5" title="5">y.sight.spcodes &lt;-<span class="st"> </span><span class="kw">left_join</span>(y.sight, spcodes.df, <span class="dt">by =</span> <span class="st">&quot;SpCode&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="co"># Ship </span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>y.proc.ship &lt;-<span class="st"> </span><span class="kw">left_join</span>(y.proc, ships.df, <span class="dt">by =</span> <span class="st">&quot;Cruise&quot;</span>)</span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co"># Species code</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>y.sight.spcodes &lt;-<span class="st"> </span><span class="kw">left_join</span>(y.sight, spcodes.df, <span class="dt">by =</span> <span class="st">&quot;SpCode&quot;</span>)</span></code></pre></div>
 </div>
 
 

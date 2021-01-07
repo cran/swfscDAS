@@ -66,7 +66,7 @@ y.sight.sg2 <- das_sight(y.proc) %>% filter(Event %in% c("S", "G"))
 
 ## ----eff----------------------------------------------------------------------
 # Chop the effort into 10km segments
-y.eff <- das_effort(
+y.eff.eq <- das_effort(
   y.proc, method = "equallength", seg.km = 10, dist.method = "greatcircle", 
   num.cores = 1
 )
@@ -83,11 +83,25 @@ glimpse(y.eff.sight$segdata)
 
 glimpse(y.eff.sight$sightinfo)
 
-## -----------------------------------------------------------------------------
+## ----strata_int---------------------------------------------------------------
 stratum.file <- system.file("das_sample_stratum.csv", package = "swfscDAS")
 y.eff.sight.strata <- das_intersects_strata(y.eff.sight, list(InPoly = stratum.file))
 
 glimpse(y.eff.sight.strata$segdata)
+
+## ----strata_eff---------------------------------------------------------------
+y.eff.strata.section <- das_effort(
+  y.proc, method = "section", strata.files = list(stratum.file),
+  num.cores = 1
+)
+
+y.eff.strata.condition <- das_effort(
+  y.proc, method = "condition", seg.min.km = 0, 
+  strata.files = list(Poly1 = stratum.file),
+  num.cores = 1
+)
+
+glimpse(y.eff.strata.section$segdata)
 
 ## ----comm---------------------------------------------------------------------
 y.comm <- das_comments(y.proc)
