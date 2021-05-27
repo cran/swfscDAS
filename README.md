@@ -7,9 +7,9 @@
 
 [![CRAN
 version](http://www.r-pkg.org/badges/version/swfscDAS)](https://cran.r-project.org/package=swfscDAS)
-[![Travis build
-status](https://travis-ci.com/smwoodman/swfscDAS.svg?branch=master)](https://travis-ci.com/smwoodman/swfscDAS)
-<!-- [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/smwoodman/swfscDAS?branch=master&svg=true)](https://ci.appveyor.com/project/smwoodman/swfscDAS) -->
+[![R-CMD-check](https://github.com/smwoodman/swfscDAS/workflows/R-CMD-check/badge.svg)](https://github.com/smwoodman/swfscDAS/actions)
+<!-- [![Travis build status](https://travis-ci.com/smwoodman/swfscDAS.svg?branch=master)](https://travis-ci.com/smwoodman/swfscDAS)
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/smwoodman/swfscDAS?branch=master&svg=true)](https://ci.appveyor.com/project/smwoodman/swfscDAS) -->
 <!-- badges: end -->
 
 This package contains functions designed for processing and analyzing
@@ -40,8 +40,8 @@ remotes::install_github("smwoodman/swfscDAS")
 
 Before installing swfscDAS, you must have
 [R](https://www.r-project.org/),
-[RStudio](https://rstudio.com/products/rstudio/download/#download), and
-the appropriate version of
+[RStudio](https://www.rstudio.com/products/rstudio/download/), and the
+appropriate version of
 [Rtools](https://cran.r-project.org/bin/windows/Rtools/) installed. When
 installing the developmental version, it is best practice to install
 after closing all instances of R and RStudio, and then running the
@@ -56,3 +56,19 @@ here](https://github.com/smwoodman/swfscDAS/blob/master/inst/DAS_Format.pdf)
 describing the DAS data format requirements. See `das_format_pdf` for
 instructions on how to access the local copy of the format PDF that is
 included in the package.
+
+## Disclaimer
+
+This repository is a scientific product and is not official
+communication of the National Oceanic and Atmospheric Administration, or
+the United States Department of Commerce. All NOAA GitHub project code
+is provided on an ‘as is’ basis and the user assumes responsibility for
+its use. Any claims against the Department of Commerce or Department of
+Commerce bureaus stemming from the use of this GitHub project will be
+governed by all applicable Federal law. Any reference to specific
+commercial products, processes, or services by service mark, trademark,
+manufacturer, or otherwise, does not constitute or imply their
+endorsement, recommendation or favoring by the Department of Commerce.
+The Department of Commerce seal and logo, or the seal and logo of a DOC
+bureau, shall not be used in any manner to imply endorsement of any
+commercial product or activity by DOC or the United States Government.
