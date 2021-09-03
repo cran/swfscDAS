@@ -1,3 +1,10 @@
+# swfscDAS 0.6.0
+
+* Fix `das_check` index math error (#5)
+
+* Removed the tz argument from `das_read`, and added 'OffsetGMT' to the output of `das_process`
+
+
 # swfscDAS 0.5.1
 
 * Link fixes - no functionality changes

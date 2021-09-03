@@ -36,7 +36,7 @@ table(y.proc$Event)
 # The number of events per Beaufort value
 table(y.proc$Bft)
 
-# Filter for T/R and O/E events to extract lat/lon points
+# Filter for R and E events to extract lat/lon points
 y.proc %>% 
   filter(Event %in% c("R", "E")) %>% 
   select(Event, Lat, Lon, Cruise, Mode, EffType) %>% 

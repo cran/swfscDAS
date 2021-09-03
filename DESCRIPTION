@@ -1,6 +1,6 @@
 Package: swfscDAS
 Title: Southwest Fisheries Science Center Shipboard DAS Data Processing
-Version: 0.5.1
+Version: 0.6.0
 Authors@R: 
     person("Sam", "Woodman", email = "sam.woodman@noaa.gov", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-6071-8186"))
 Description: Process and summarize shipboard 
@@ -21,8 +21,8 @@ Encoding: UTF-8
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2021-05-27 15:49:48 UTC; sam.woodman
+Packaged: 2021-09-03 19:16:50 UTC; sam.woodman
 Author: Sam Woodman [aut, cre] (<https://orcid.org/0000-0001-6071-8186>)
 Maintainer: Sam Woodman <sam.woodman@noaa.gov>
 Repository: CRAN
-Date/Publication: 2021-05-27 16:30:03 UTC
+Date/Publication: 2021-09-03 19:40:02 UTC

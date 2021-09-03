@@ -11,11 +11,12 @@
 #' @author Sam Woodman \email{sam.woodman@@noaa.gov}
 #' @seealso \url{https://smwoodman.github.io/swfscDAS/}
 #'
-#' @importFrom dplyr add_row arrange between bind_cols bind_rows case_when desc everything
-#'   filter full_join group_by lag left_join mutate n right_join
-#'   select slice starts_with summarise ungroup
+#' @importFrom dplyr add_row arrange between bind_cols bind_rows case_when desc
+#'   distinct everything filter full_join group_by lag left_join mutate n n_distinct
+#'   right_join select slice starts_with summarise ungroup
 #' @importFrom lubridate year month day tz
 #' @importFrom magrittr %>%
+#' @importFrom methods setOldClass
 #' @importFrom parallel clusterExport detectCores parLapplyLB stopCluster
 #' @importFrom readr cols col_character fwf_positions read_fwf
 #' @importFrom rlang !! .data
@@ -30,5 +31,5 @@
 #' @keywords package
 NULL
 
-methods::setOldClass("das_dfr")
-methods::setOldClass("das_df")
+setOldClass("das_dfr")
+setOldClass("das_df")
