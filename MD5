@@ -1,6 +1,6 @@
-d8e44c4b380bbe9dc717c24c9f6252a6 *DESCRIPTION
-87c7bd4de3943de3dff4fd1ae9cece2a *NAMESPACE
-09e4b00cc3d13c6ac3eaeb5291646387 *NEWS.md
+6c62aa665e827c2dbfbacfc51e644035 *DESCRIPTION
+2dba93c5f274f2ce6a36fa11ae741852 *NAMESPACE
+65e67d6e38b443fcf8661fb8471508f9 *NEWS.md
 102266fa9dd1be4dfcddcf7a603b4d62 *R/as_das_df.R
 1e4cba8a7d8da74119d7012247866623 *R/as_das_dfr.R
 41efa05eba27e51ef7d4117b7745693d *R/das_check.R
@@ -9,7 +9,7 @@ d8e44c4b380bbe9dc717c24c9f6252a6 *DESCRIPTION
 aa831a68d166cd71fd9f80abb01c5052 *R/das_chop_section.R
 025d24d94725a1e0f4874bc98d665b71 *R/das_class.R
 3cccf74edcabbddbe58dc778bf9bc64c *R/das_comments.R
-952cb9d3fbfadfa7988c162df2ad5213 *R/das_effort.R
+85b33e6550dc36a09ae80294a38c9ed3 *R/das_effort.R
 683d524145ed03b82a50728c7d8a687c *R/das_effort_sight.R
 c418ed6b1524e453015f178111ee8a16 *R/das_effort_strata.R
 83c136f1419aecf61d71369ebedb45dc *R/das_format_pdf.R
@@ -17,14 +17,14 @@ c418ed6b1524e453015f178111ee8a16 *R/das_effort_strata.R
 c0648eb11398f305921cf697009adedb *R/das_process.R
 ea4549aa913deb4902f1ad0833fee956 *R/das_read.R
 37f5ff79244213e016b624e04090564a *R/das_segdata.R
-0a0486f88d90a510fbd55b3c9d2e3a7e *R/das_sight.R
+bbbc8546e49f9a377e099592bca691ed *R/das_sight.R
 ce7d7c6cb53836f6b4b9b891b24747e4 *R/distance_greatcircle.R
 d1632370a5a33bd5f35db26a0ce42da9 *R/randpicks_convert.R
 6c3088d16042b73f6c2a2ea1ea2f534d *R/subsetting.R
 a13f59f7aab865b75d633d6969103c54 *R/swfscDAS-internal.R
-01fdf8f5aa60e9968937ae9ffab889ed *R/swfscDAS-package.R
+5076a5e29db8a50290844c47e878bbf7 *R/swfscDAS-package.R
 35abc67baf9094dd0da3defc2d5a6072 *README.md
-306d20fd8a4f8144423f20c2eb0a0555 *build/vignette.rds
+72642f8b1d5f15a2e03248acbfc9bd05 *build/vignette.rds
 dd00f8695b1893fbd071e5dfdda1fd21 *inst/DAS_Format.pdf
 019d2c4a47e87035cddc8ec511bffee7 *inst/DAS_chop_equallength_figures.pdf
 ad585d78881d3eb2512fadfd80370e11 *inst/Ship_sample.dat
@@ -68,5 +68,6 @@ bcf11c588150871770d0c4312a21daa2 *tests/testthat/test-effort_strata.R
 4976b6655b8702a1f55bf5cd6bd92eab *tests/testthat/test-output.R
 00ddfb270b4716ae44106e002d40bd6b *tests/testthat/test-process.R
 54d5f7bed481b6fecb5f84d46745152c *tests/testthat/test-subsetting.R
+02677e42969abfa1a54c6c4c904f567f *tests/testthat/test-zero_sighting_events.R
 682b2d5c6fd4bed582338b2d254f0614 *vignettes/DAS_data_join.Rmd
 e4ee86caaf4778899b2b06a07d1a3935 *vignettes/swfscDAS.Rmd
