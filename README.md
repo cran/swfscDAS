@@ -7,9 +7,7 @@
 
 [![CRAN
 version](http://www.r-pkg.org/badges/version/swfscDAS)](https://cran.r-project.org/package=swfscDAS)
-[![R-CMD-check](https://github.com/smwoodman/swfscDAS/workflows/R-CMD-check/badge.svg)](https://github.com/smwoodman/swfscDAS/actions)
-<!-- [![Travis build status](https://travis-ci.com/smwoodman/swfscDAS.svg?branch=master)](https://travis-ci.com/smwoodman/swfscDAS)
-[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/smwoodman/swfscDAS?branch=master&svg=true)](https://ci.appveyor.com/project/smwoodman/swfscDAS) -->
+[![R-CMD-check](https://github.com/smwoodman/swfscDAS/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/smwoodman/swfscDAS/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 This package contains functions designed for processing and analyzing
@@ -37,16 +35,6 @@ You can install the developmental version of swfscDAS from
 # install.packages("remotes")
 remotes::install_github("smwoodman/swfscDAS")
 ```
-
-Before installing swfscDAS, you must have
-[R](https://www.r-project.org/),
-[RStudio](https://www.rstudio.com/products/rstudio/download/), and the
-appropriate version of
-[Rtools](https://cran.r-project.org/bin/windows/Rtools/) installed. When
-installing the developmental version, it is best practice to install
-after closing all instances of R and RStudio, and then running the
-install code from the R GUI rather than RStudio. Please contact the
-developer if you have any issues.
 
 ## DAS data format
 

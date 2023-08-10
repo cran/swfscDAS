@@ -1,3 +1,10 @@
+# swfscDAS 0.6.2
+
+* Use `reframe` in grouping summaries in `das_sight` for when none of a certain event are in the data (#8)
+
+* Ensure that `sum(GsSpx)` equals `GsSchoolx`, for all of Best, High and Low (#9)
+
+
 # swfscDAS 0.6.1
 
 * Fix bug in `das_sight` and `das_effort` when the DAS file contains no sightings
