@@ -20,7 +20,9 @@ library(stringr)
 library(swfscDAS)
 ```
 
-This document introduces you to the swfscDAS package, and specifically its functionality and workflow. This package is intended to standardize and streamline processing of shipboard DAS data collected using the WinCruz program from the Southwest Fisheries Science Center. In DAS data, an event is only recorded when something changes or happens, which can complicate processing. Thus, the main theme of this package is enabling analyses and downstream processing by 1) determining associated state and condition information for each event and 2) pulling out event-specific information from the Data (Field) columns.
+This document introduces you to the swfscDAS package, and specifically its functionality and workflow. This package is intended to standardize and streamline processing of DAS data. It was designed for shipboard DAS data generated using the WinCruz software from the Southwest Fisheries Science Center. However, the DAS files and the `swfscDAS` package are and can be used by others, e.g. to process decades of NOAA Fisheries survey data. 
+
+In DAS data, an event is only recorded when something changes or happens, which can complicate processing. Thus, the main theme of this package is enabling analyses and downstream processing by 1) determining associated state and condition information for each event and 2) pulling out event-specific information from the Data (Field) columns.
 
 ## Data
 
@@ -33,7 +35,7 @@ head(readLines(y))
 
 ## Check data format
 
-The first step in processing DAS data is to ensure that the DAS file has expected formatting and values. This package contains the `das_check` function, which performs some basic checks. This function is a precursor to a more comprehensive DASCHECK program, which is currently in development. The checks performed by this function are detailed in the function documentation, which can be accessed by running `?das_check`. You can find the PDF with the expected DAS data format at https://smwoodman.github.io/swfscDAS/, or see `?das_format_pdf` for how to access a local copy. To check for valid species codes using this function, you can pass the function an SpCodes.dat file
+The first step in processing DAS data is to ensure that the DAS file has expected formatting and values. This package contains the `das_check` function, which performs some basic checks. This function is a precursor to a more comprehensive DASCHECK program, which is currently in development. The checks performed by this function are detailed in the function documentation, which can be accessed by running `?das_check`. You can find the PDF with the expected DAS data format at https://swfsc.github.io/swfscDAS/, or see `?das_format_pdf` for how to access a local copy. To check for valid species codes using this function, you can pass the function an SpCodes.dat file
 
 ```{r check, eval=FALSE}
 # Code not run
