@@ -1,10 +1,19 @@
+# swfscDAS 0.6.4
+
+* The DateTime column in `das_read` output now has a timezone of `""` (#13)
+
+* remove [superseded](https://tidyselect.r-lib.org/news/index.html#lifecycle-changes-1-2-0) `.data$` syntax in tidyselect expressions
+
+* Add OffSetGMT column to `das_effort` 'segdata' output (#12)
+
+
 # swfscDAS 0.6.3
 
-* Moved repo to https://github.com/swfsc, and updated all associated documentation. Also generalized documentation to not be as SWFSC-focused, and thus speak to more general uses of DAS files
-
-* Changed license to Apache License (== 2), based on NMFS guidance at https://nmfs-opensci.github.io/GitHub-Guide
+* Moved repo to https://github.com/SWFSC, and updated all associated documentation. Also generalized documentation to not be as SWFSC-focused, and thus speak to more general uses of DAS files
 
 * Generalized package title and description to not be SWFSC-specific
+
+* Changed license to Apache License (== 2), based on NMFS guidance at https://nmfs-opensci.github.io/GitHub-Guide
 
 
 # swfscDAS 0.6.2

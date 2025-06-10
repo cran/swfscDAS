@@ -2,7 +2,7 @@
 
 <!-- badges: start -->
 
-[![CRAN version](http://www.r-pkg.org/badges/version/swfscDAS)](https://cran.r-project.org/package=swfscDAS)
+[![CRAN version](https://www.r-pkg.org/badges/version/swfscDAS)](https://cran.r-project.org/package=swfscDAS)
 [![R-CMD-check](https://github.com/swfsc/swfscDAS/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/swfsc/swfscDAS/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
@@ -12,22 +12,24 @@ More generally, the package is intended to standardize and streamline basic DAS 
 
 ## Installation
 
-You can install the released version of swfscDAS from [CRAN](https://CRAN.R-project.org) with:
+You can install the released version of `swfscDAS` from [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
 install.packages("swfscDAS")
 ```
 
-You can install the developmental version of swfscDAS from [GitHub](https://github.com) with:
+You can install the developmental version of `swfscDAS` from [GitHub](https://github.com) with:
 
 ``` r
-# install.packages("remotes")
-remotes::install_github("swfsc/swfscDAS")
+# install.packages("pak")
+pak::install_github("swfsc/swfscDAS")
 ```
+
+Note that `pak` is recommended here because of occassional issues using `remotes` from government computers.
 
 ## DAS data format
 
-swfscDAS expects data to follow the conventions and format used by the WinCruz program. You can [download a PDF here](https://github.com/swfsc/swfscDAS/blob/main/inst/DAS_Format.pdf) describing the DAS data format requirements. See `das_format_pdf` for instructions on how to access the local copy of the format PDF that is included in the package.
+`swfscDAS` expects data to follow the conventions and format used by the WinCruz program. You can [download a PDF here](https://github.com/swfsc/swfscDAS/blob/main/inst/DAS_Format.pdf) describing the DAS data format requirements. See `das_format_pdf` for instructions on how to access the local copy of the format PDF that is included in the package.
 
 ## Disclaimer
 

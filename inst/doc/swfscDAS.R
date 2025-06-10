@@ -14,8 +14,8 @@ y <- system.file("das_sample.das", package = "swfscDAS")
 head(readLines(y))
 
 ## ----check, eval=FALSE--------------------------------------------------------
-#  # Code not run
-#  y.check <- das_check(y, skip = 0, print.cruise.nums = TRUE)
+# # Code not run
+# y.check <- das_check(y, skip = 0, print.cruise.nums = TRUE)
 
 ## ----readproc-----------------------------------------------------------------
 # Read 
