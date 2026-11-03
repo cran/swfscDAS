@@ -29,7 +29,7 @@ In DAS data, an event is only recorded when something changes or happens, which 
 This package includes a sample DAS file, which we will use in this document
 
 ```{r data}
-y <- system.file("das_sample.das", package = "swfscDAS")
+y <- system.file("extdata", "das_sample.das", package = "swfscDAS")
 head(readLines(y))
 ```
 
@@ -71,9 +71,9 @@ table(y.proc$Event)
 table(y.proc$Bft)
 
 # Filter for R and E events to extract lat/lon points
-y.proc %>% 
-  filter(Event %in% c("R", "E")) %>% 
-  select(Event, Lat, Lon, Cruise, Mode, EffType) %>% 
+y.proc |> 
+  filter(Event %in% c("R", "E")) |> 
+  select(Event, Lat, Lon, Cruise, Mode, EffType) |> 
   head()
 ```
 
@@ -83,18 +83,18 @@ The `swfscDAS` package does contain specific functions for extracting and/or sum
 
 ```{r sight}
 y.sight <- das_sight(y.proc, return.format = "default")
-y.sight %>% 
-  select(Event, SightNo:PerpDistKm) %>% 
+y.sight |> 
+  select(Event, SightNo:PerpDistKm) |> 
   glimpse()
 
 y.sight.wide <- das_sight(y.proc, return.format = "wide")
-y.sight.wide %>% 
-  select(Event, SightNo:PerpDistKm) %>% 
+y.sight.wide |> 
+  select(Event, SightNo:PerpDistKm) |> 
   glimpse()
 
 y.sight.complete <- das_sight(y.proc, return.format = "complete")
-y.sight.complete %>% 
-  select(Event, SightNo:PerpDistKm) %>% 
+y.sight.complete |> 
+  select(Event, SightNo:PerpDistKm) |> 
   glimpse()
 ```
 
@@ -104,7 +104,7 @@ You can also easily filter or subset the sighting data for the desired event cod
 y.sight.sg <- das_sight(y.proc, return.events = c("S", "G"))
 
 # Note that this is equivalent to:
-y.sight.sg2 <- das_sight(y.proc) %>% filter(Event %in% c("S", "G"))
+y.sight.sg2 <- das_sight(y.proc) |> filter(Event %in% c("S", "G"))
 ```
 
 ## Effort
@@ -133,6 +133,8 @@ glimpse(y.eff.sight$segdata)
 glimpse(y.eff.sight$sightinfo)
 ```
 
+Note that `das_effort` contains several arguments that allow for more control over segmentation steps. These arguments include `seg0.drop` (to drop segments of length <=0.1 with no sightings), `comment.drop` (should positions from comment events be used when segment chopping), and `event.touse` (which events to use when determining segment lengths). See the function documentation (`?das_effort`) for more details. Additionally, for group size calibration work, users can use the `gs.sp.min1` argument to specify if species group size values should have a minimum value of 1.
+
 ## Strata
 
 This package contains several methods to incorporate strata into your DAS data processing: `das_intersects_strata` for assigning points to strata and `das_effort` for chopping effort lines by strata. These functions contain a 'strata.files' argument, which expects a (named) list of paths to CSV files; names are automatically generated if not provided. These files must have headers, longitude values in column one and latitude values in column two, and be closed polygons.
@@ -140,7 +142,7 @@ This package contains several methods to incorporate strata into your DAS data p
 First, `das_intersects_strata` allows you to add columns to data frames indicating if a point intersects one or more strata polygons. You can pass this function either a data frame or a list. If a list then it must be the output of `das_effort` or `das_effort_sight`, and the function will use the segment midpoints to determine if a segment (and associated sightings) intersected each stratum.
 
 ```{r strata_int}
-stratum.file <- system.file("das_sample_stratum.csv", package = "swfscDAS")
+stratum.file <- system.file("extdata", "das_sample_stratum.csv", package = "swfscDAS")
 y.eff.sight.strata <- das_intersects_strata(y.eff.sight, list(InPoly = stratum.file))
 
 glimpse(y.eff.sight.strata$segdata)
@@ -171,5 +173,6 @@ In addition, you can use `das_comments` to generate comment strings. This is par
 y.comm <- das_comments(y.proc)
 glimpse(select(y.comm, Event, line_num, comment_str))
 
-y.comm[str_detect(y.comm$comment_str, "gear"), ] #Could also use grepl() here
+y.comm |> 
+  filter(str_detect(comment_str, "gear")) #Could also use grepl() here
 ```

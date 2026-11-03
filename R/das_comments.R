@@ -13,7 +13,7 @@
 #'   comment_str containing the concatenated comment strings
 #'
 #' @examples
-#' y <- system.file("das_sample.das", package = "swfscDAS")
+#' y <- system.file("extdata", "das_sample.das", package = "swfscDAS")
 #' y.proc <- das_process(y)
 #'
 #' das_comments(y.proc)
@@ -59,5 +59,5 @@ das_comments.das_dfr <- function(x) {
     paste(na.omit(i), collapse = "")
   })
 
-  x.c %>% mutate(comment_str = unname(x.c.c))
+  x.c |> mutate(comment_str = unname(x.c.c))
 }

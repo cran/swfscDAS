@@ -16,49 +16,50 @@
 #'   section)
 #' @param ... ignored
 #'
-#' @details WARNING - do not call this function directly! It is exported for
-#'   documentation purposes, but is intended for internal package use only.
+#' @details
+#' WARNING - do not call this function directly! It is exported for
+#' documentation purposes, but is intended for internal package use only.
 #'
-#'   This function was designed to be called by one of the das_chop_ functions,
-#'   e.g. \code{\link{das_chop_equallength}}, and thus users should avoid
-#'   calling it themselves. It loops through the events in \code{x}, chopping
-#'   \code{x} into modeling segments while calculating and storing relevant
-#'   information for each segment. Because \code{x} is a continuous effort
-#'   section, it must begin with a "B" or "R" event and end with the
-#'   corresponding "E" event.
+#' This function was designed to be called by one of the das_chop_ functions,
+#' e.g. \code{\link{das_chop_equallength}}, and thus users should avoid calling
+#' it themselves. It loops through the events in \code{x}, chopping \code{x}
+#' into modeling segments while calculating and storing relevant information for
+#' each segment. Because \code{x} is a continuous effort section, it must begin
+#' with a "B" or "R" event and end with the corresponding "E" event.
 #'
-#'   For each segment, this function reports the segment number, segment ID,
-#'   cruise number, the start/end/mid coordinates (lat/lon), start/end/mid
-#'   date/times (DateTime), segment length, year, month, day, midpoint time,
-#'   mode, OffsetGMT value, effort type, effective strip width sides (number of
-#'   sides searched), and average conditions (which are specified by
-#'   \code{conditions}). The segment ID is designated as \code{section.id} _
-#'   index of the modeling segment. Thus, if \code{section.id} is \code{1}, then
-#'   the segment ID for the second segment from \code{x} is \code{"1_2"}. The
-#'   start/end coordinates and date/times are interpolated as needed, e.g. when
-#'   using the 'equallength' method.
+#' For each segment, this function reports the segment number, segment ID,
+#' cruise number, the start/end/mid coordinates (lat/lon), start/end/mid
+#' date/times (DateTime), segment length, year, month, day, midpoint time, mode,
+#' OffsetGMT value, effort type, effective strip width sides (number of sides
+#' searched), and average conditions (which are specified by \code{conditions}).
+#' The segment ID is designated as \code{section.id} _ index of the modeling
+#' segment. Thus, if \code{section.id} is \code{1}, then the segment ID for the
+#' second segment from \code{x} is \code{"1_2"}. The start/end coordinates and
+#' date/times are interpolated as needed, e.g. when using the 'equallength'
+#' method.
 #'
-#'   When \code{segdata.method} is "avg", the condition values are calculated as
-#'   a weighted average by distance. The reported value for logical columns
-#'   (e.g. Glare) is the percentage (in decimals) of the segment in which that
-#'   condition was \code{TRUE}. For character columns, the reported value for
-#'   each segment is the unique value(s) present in the segment, with \code{NA}s
-#'   omitted, pasted together via \code{paste(..., collapse = "; ")}. When
-#'   \code{segdata.method} is "maxdist", the reported values are, for each
-#'   condition, the value recorded for the longest distance during that segment
-#'   (with \code{NA}s omitted).
+#' When \code{segdata.method} is "avg", the condition values are calculated as a
+#' weighted average by distance. The reported value for logical columns (e.g.
+#' Glare) is the percentage (in decimals) of the segment in which that condition
+#' was \code{TRUE}. For character columns, the reported value for each segment
+#' is the unique value(s) present in the segment, with \code{NA}s omitted,
+#' pasted together via \code{paste(..., collapse = "; ")}. When
+#' \code{segdata.method} is "maxdist", the reported values are, for each
+#' condition, the value recorded for the longest distance during that segment
+#' (with \code{NA}s omitted).
 #'
-#'   Cruise number, mode, effort type, sides searched, and file name are also
-#'   included in the segdata output. These values (excluding \code{NA}s) must be
-#'   consistent across the entire effort section, and thus across all segments
-#'   in \code{x}; a warning is printed if there are any inconsistencies
+#' Cruise number, mode, effort type, sides searched, and file name are also
+#' included in the segdata output. These values (excluding \code{NA}s) must be
+#' consistent across the entire effort section, and thus across all segments in
+#' \code{x}; a warning is printed if there are any inconsistencies
 #'
-#'   \code{\link[swfscMisc]{bearing}} and \code{\link[swfscMisc]{destination}}
-#'   are used to calculate the segment start, mid, and end points, with
-#'   \code{method = "vincenty"}.
+#' \code{\link[swfscMisc]{bearing}} and \code{\link[swfscMisc]{destination}} are
+#' used to calculate the segment start, mid, and end points, with \code{method =
+#' "vincenty"}.
 #'
-#' @return Data frame with the segdata information described in Details
-#'   and in \code{\link{das_effort}}
+#' @return
+#' Data frame with the segdata information described in Details and in
+#' \code{\link{das_effort}}
 #'
 #' @export
 das_segdata <- function(x, ...) UseMethod("das_segdata")
@@ -99,7 +100,7 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
   # Prep stuff - get the info that is consistent for the entire effort length
   # ymd determined below to be safe
   df.out1.cols <- c("file_das", "Cruise", "Mode", "OffsetGMT",
-                    "EffType", "ESWsides")
+                    "EffType", "ESWsides", "Trackline")
 
   # <=1 accounts for when all
   df.out1.check <- vapply(df.out1.cols, function(i) {
@@ -111,9 +112,9 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
             "continuous effort section ", section.id, ":\n",
             paste(df.out1.cols, collapse  = ", "))
 
-  df.out1 <- x %>%
-    select(!!df.out1.cols) %>%
-    select(file = "file_das", everything()) %>%
+  df.out1 <- x |>
+    select(!!df.out1.cols) |>
+    select(file = "file_das", everything()) |>
     slice(n()) #use n() instead of 1 b/c some vars may be NA in first line
 
 
@@ -124,7 +125,7 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
   )
 
   #----------------------------------------------------------------------------
-  segdata.all %>%
+  segdata.all |>
     select("seg_idx", "section_id", "section_sub_id", "file", "stlin", "endlin",
            "lat1", "lon1", "DateTime1", "lat2", "lon2", "DateTime2",
            "mlat", "mlon", "mDateTime", "dist", "year", "month", "day", "mtime",
@@ -190,17 +191,18 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
       conditions.list.df <- data.frame(
         lapply(names(conditions.list), function(k, das.df) {
           val.out <- unique(na.omit(das.df[[k]]))
-          if (length(val.out) > 1)
+          if (length(val.out) > 1) {
             warning("The continuous effort section with section_id ",
                     section.id, " has a distance of 0, ",
                     "and multiple values for condition ", k,
-                    ". Only the first element will be output",
+                    ". The final value of this condition ",
+                    "will be provided in the output",
                     immediate. = TRUE)
-          if (length(val.out) == 0) NA else val.out
+          }
+          if (length(val.out) == 0) NA else tail(val.out, 1)
         }, das.df = das.df)
       )
       names(conditions.list.df) <- conditions.names
-
       enddt.curr <- tail(das.df$DateTime, 1)
 
       # ### Message printed in das_chop_equallength, outside of parallel calls
@@ -222,11 +224,11 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
         mlat = startpt.curr[1], mlon = startpt.curr[2], mDateTime = mean(c(startdt.curr, enddt.curr)),
         dist = 0,
         stringsAsFactors = FALSE
-      ) %>%
+      ) |>
         mutate(mtime = strftime(.data$mDateTime, format = "%H:%M:%S",
                                 tz = tz(.data$mDateTime)),
                year = year(.data$mDateTime), month = month(.data$mDateTime),
-               day = day(.data$mDateTime)) %>%
+               day = day(.data$mDateTime)) |>
         bind_cols(df.out1, conditions.list.df)
 
     } else {
@@ -325,8 +327,8 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
 
                 } else {
                   #.segdata_aggr() throws an error if not character or numeric
-                  tmp <- k.list[[k]] %>%
-                    filter(!is.na(.data$val)) %>%
+                  tmp <- k.list[[k]] |>
+                    filter(!is.na(.data$val)) |>
                     mutate(val_frac = .data$val * .data$dist)
 
                   if (nrow(tmp) == 0) NA else sum(tmp$val_frac) / sum(tmp$dist)
@@ -340,10 +342,10 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
           } else if (segdata.method == "maxdist") {
             conditions.list.df <- data.frame(
               lapply(names(conditions.list), function(k, k.list) {
-                tmp <- k.list[[k]] %>%
-                  filter(!is.na(.data$val)) %>%
-                  group_by(.data$val) %>%
-                  summarise(dist_sum = sum(as.numeric(.data$dist))) %>%
+                tmp <- k.list[[k]] |>
+                  filter(!is.na(.data$val)) |>
+                  group_by(.data$val) |>
+                  summarise(dist_sum = sum(as.numeric(.data$dist))) |>
                   arrange(desc(.data$dist_sum), .data$val)
 
                 if (nrow(tmp) == 0) NA else tmp$val[1]
@@ -372,11 +374,11 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
             mlat = midpt.curr[1], mlon = midpt.curr[2], mDateTime = mean(c(startdt.curr, enddt.curr)),
             dist = seg.lengths[subseg.curr],
             stringsAsFactors = FALSE
-          ) %>%
+          ) |>
             mutate(mtime = strftime(.data$mDateTime, format = "%H:%M:%S",
                                     tz = tz(.data$mDateTime)),
                    year = year(.data$mDateTime), month = month(.data$mDateTime),
-                   day = day(.data$mDateTime)) %>%
+                   day = day(.data$mDateTime)) |>
             bind_cols(df.out1, conditions.list.df)
 
           segdata.all <- rbind(segdata.all, segdata)
@@ -425,7 +427,7 @@ das_segdata.das_df <- function(x, conditions, segdata.method = c("avg", "maxdist
 
   #--------------------------------------------------------------------------
   # Ensure longitudes are between -180 and 180, and return
-  segdata.all %>%
+  segdata.all |>
     mutate(lon1 = ifelse(.greater(.data$lon1, 180), .data$lon1 - 360, .data$lon1),
            lon1 = ifelse(.less(.data$lon1, -180), .data$lon1 + 360, .data$lon1),
            lon2 = ifelse(.greater(.data$lon2, 180), .data$lon2 - 360, .data$lon2),

@@ -6,9 +6,12 @@
 #' @param skip integer: see \code{\link[readr]{read_fwf}}. Default is 0
 #' @param file.out filename to which to write the error log;
 #'   default is \code{NULL}
-#' @param sp.codes character; filename of .dat file from which to read
-#'   accepted species codes. If \code{NULL}, species codes will not be checked.
-#'   Default is \code{NULL}
+#' @param sp.codes.file character; default is `NULL`.
+#'   Filename of the SpCodes file from which to read the species codes.
+#'   If `NULL`, the default (internal) file will be used.
+#'   The SpCodes file will be read by [das_spcodes_read()]
+#' @param sp.codes.skip integer; default is 0.
+#'   Passed directly to `skip` argument of [das_spcodes_read()]
 #' @param print.cruise.nums logical; indicates if a table with all the
 #'   cruise numbers in the \code{x} should be printed using
 #'   \code{\link[base]{table}}. Default is \code{TRUE}
@@ -40,11 +43,14 @@
 #'   Echo sounder             \tab B             \tab Data4          \tab Must be one of Y, N, y, n, or NA (blank)                                  \cr
 #'   Effort type              \tab R             \tab Data1          \tab Must be one of F, N, S, or NA (blank)                                     \cr
 #'   ESW sides                \tab R             \tab Data2          \tab Effective strip width; must be one of F, H, or NA (blank)                 \cr
+#'   Trackline number         \tab R             \tab Data3          \tab Trackline number, represented as a character                              \cr
 #'   Course                   \tab N             \tab Data1          \tab Can be converted to a numeric value                                       \cr
 #'   Speed                    \tab N             \tab Data2          \tab Can be converted to a numeric value                                       \cr
 #'   Beaufort                 \tab V             \tab Data1          \tab Must be a whole number between 0 and 9                                    \cr
 #'   Swell height             \tab V             \tab Data2          \tab Can be converted to a numeric value                                       \cr
+#'   Swell direction          \tab V             \tab Data3          \tab Can be converted to a numeric value                                       \cr
 #'   Wind speed               \tab V             \tab Data5          \tab Can be converted to a numeric value                                       \cr
+#'   Wind direction           \tab W             \tab Data4          \tab Can be converted to a numeric value                                       \cr
 #'   Rain or fog              \tab W             \tab Data1          \tab Must be between 0 and 5 and either a whole number or have decimal value .5\cr
 #'   Horizontal sun           \tab W             \tab Data2          \tab Must be a whole number between 0 and 12                                   \cr
 #'   Vertical sun             \tab W             \tab Data3          \tab Must be a whole number between 0 and 12                                   \cr
@@ -90,12 +96,22 @@
 #' A warning is printed if any events are r events; see \code{\link{das_process}} for details about r events
 #'
 #' @examples
-#' y <- system.file("das_sample.das", package = "swfscDAS")
+#' y <- system.file("extdata", "das_sample.das", package = "swfscDAS")
 #' if (interactive()) das_check(y)
 #'
+#' # Using your own SpCodes file
+#' sp.codes.file <- system.file("extdata", "SpCodes.dat", package = "swfscDAS")
+#' if (interactive()) das_check(y, sp.codes.file = sp.codes.file)
+#'
 #' @export
-das_check <- function(file, skip = 0, file.out = NULL, sp.codes = NULL,
-                      print.cruise.nums = TRUE) {
+das_check <- function(
+    file,
+    skip = 0,
+    file.out = NULL,
+    sp.codes.file = NULL,
+    sp.codes.skip = 0,
+    print.cruise.nums = TRUE
+    ) {
 
   if (length(unique(file)) != length(file))
     warning("Not all files are unique - this likely will cause an error in ",
@@ -118,7 +134,7 @@ das_check <- function(file, skip = 0, file.out = NULL, sp.codes = NULL,
   x.lines <- substr(do.call(c, x.lines.list), 4, 39)
 
   message("Processing DAS file")
-  x.proc <- suppressWarnings(das_process(x)) %>%
+  x.proc <- suppressWarnings(das_process(x)) |>
     left_join(select(x, "file_das", "line_num", "idx"),
               by = c('file_das', "line_num"))
   x.proc <- as_das_df(x.proc)
@@ -133,10 +149,10 @@ das_check <- function(file, skip = 0, file.out = NULL, sp.codes = NULL,
 
   #----------------------------------------------------------------------------
   ### Process sp.codes file
-  if (!is.null(sp.codes)) {
+  if (!is.null(sp.codes.file)) {
     message("Reading and processing SpCodes file")
     sp.acc.df <- read_fwf(
-      sp.codes,
+      sp.codes.file,
       col_positions = fwf_positions(start = c(1, 6, 18, 58), end = c(4, 15, 57, NA)),
       col_types = cols(.default = col_character()),
       trim_ws = TRUE, skip = 0, skip_empty_rows = FALSE
@@ -146,7 +162,7 @@ das_check <- function(file, skip = 0, file.out = NULL, sp.codes = NULL,
     sp.acc.all <- c(sp.acc, tolower(sp.acc))
 
     if (!all(nchar(sp.acc) %in% 2:3))
-      warning("Some species codes from sp.codes are not two or three charcters. ",
+      warning("Some species codes from sp.codes.file are not two or three charcters. ",
               "Did you load the correct species code .dat file?",
               immediate. = TRUE)
   }
@@ -173,7 +189,7 @@ das_check <- function(file, skip = 0, file.out = NULL, sp.codes = NULL,
 
 
   ### Check lat/lon coordinates - NA events are ignored
-  # x.proc.ll <- x.proc %>% filter(!(Event %in% c("?", 1:8)))
+  # x.proc.ll <- x.proc |> filter(!(Event %in% c("?", 1:8)))
   lat.which <- which(!between(x.proc$Lat, -90, 90))
   lon.which <- which(!between(x.proc$Lat, -180, 1800))
 
@@ -227,23 +243,23 @@ das_check <- function(file, skip = 0, file.out = NULL, sp.codes = NULL,
   }
 
   # Create data frame with prev_columns
-  x.proc.prev <- x.proc %>%
+  x.proc.prev <- x.proc |>
     mutate(Event_prev = lag(.data$Event),
            OnEffort_prev = lag(.data$OnEffort))
 
   # 2) All R events occur while off effort, or after a B event that occurs while off effort
-  br.r.which <- x.proc.prev %>%
+  br.r.which <- x.proc.prev |>
     filter((.data$Event == "R" & .data$OnEffort_prev & .data$Event_prev != "B") |
-             (.data$Event == "B" & .data$OnEffort_prev)) %>%
-    select("idx") %>%
-    unlist() %>%
+             (.data$Event == "B" & .data$OnEffort_prev)) |>
+    select("idx") |>
+    unlist() |>
     unname()
 
   # 3) All E events occur while on effort
-  e.which <- x.proc.prev %>%
-    filter(.data$Event == "E" & !.data$OnEffort_prev) %>%
-    select("idx") %>%
-    unlist() %>%
+  e.which <- x.proc.prev |>
+    filter(.data$Event == "E" & !.data$OnEffort_prev) |>
+    select("idx") |>
+    unlist() |>
     unname()
 
 
@@ -278,11 +294,11 @@ das_check <- function(file, skip = 0, file.out = NULL, sp.codes = NULL,
     Extra_data = substr(x.lines, 100, max(nchar(x.lines))),
     idx = seq_along(x.lines),
     stringsAsFactors = FALSE
-  ) %>%
-    filter(!(.data$Event %in% c("C", "*", "#"))) %>%
+  ) |>
+    filter(!(.data$Event %in% c("C", "*", "#"))) |>
     mutate(Extra_data = trimws(.data$Extra_data, which = "both"))
 
-  x.tmp.filt.data <- x.tmp.filt %>% select(starts_with("Data"))
+  x.tmp.filt.data <- x.tmp.filt |> select(starts_with("Data"))
 
   x.tmp.which <- lapply(1:ncol(x.tmp.filt.data), function(i) {
     x1 <- trimws(x.tmp.filt.data[[i]], which = "left")
@@ -323,7 +339,7 @@ das_check <- function(file, skip = 0, file.out = NULL, sp.codes = NULL,
   txt.e.na <- "E events should only have data in the Data1 column"
 
   # R events
-  idx.r.na <- .check_isna(x, c("R"), paste0("Data", 3:9))
+  idx.r.na <- .check_isna(x, c("R"), paste0("Data", 4:9))
   txt.r.na <- "R events should only have data in the Data1-2 columns"
 
   # N events
@@ -400,9 +416,17 @@ das_check <- function(file, skip = 0, file.out = NULL, sp.codes = NULL,
   idx.v.2 <- .check_numeric(x, "V", "Data2")
   txt.v.2 <- "Swell height (Data2 of V events) cannot be converted to a numeric"
 
+  # Swell direction
+  idx.v.2 <- .check_numeric(x, "V", "Data3")
+  txt.v.2 <- "Swell direction (Data3 of V events) cannot be converted to a numeric"
+
   # Wind speed
   idx.v.5 <- .check_numeric(x, "V", "Data5")
   txt.v.5 <- "Wind speed (Data5 of V events) cannot be converted to a numeric"
+
+  # Wind direction
+  idx.v.5 <- .check_numeric(x, "W", "Data4")
+  txt.v.5 <- "Wind direction (Data4 of W events) cannot be converted to a numeric"
 
   # RainFog
   rf.acc <- c(seq(0, 5, by = 0.5), sprintf("%02d", 1:5), NA)
@@ -485,8 +509,8 @@ das_check <- function(file, skip = 0, file.out = NULL, sp.codes = NULL,
   idx.a.4 <- .check_character(x, "A", "Data4", c("N", "Y", "n", "y", NA))
   txt.a.4 <- "Birds (Data4 of A events) is not one of N, Y, n, y, or NA"
 
-  txt.a.spcode <- "Species code(s) were not one of the accepted codes provided via sp.codes"
-  idx.a.spcode <- if (is.null(sp.codes)) {
+  txt.a.spcode <- "Species code(s) were not one of the accepted codes provided via sp.codes.file"
+  idx.a.spcode <- if (is.null(sp.codes.file)) {
     integer(0)
   } else {
     .check_character(x, "A", paste0("Data", 5:8), c(sp.acc.all, NA))
@@ -500,8 +524,8 @@ das_check <- function(file, skip = 0, file.out = NULL, sp.codes = NULL,
   )
 
   # Turtle
-  txt.t.spcode <- "Turtle species code was not one of the accepted codes provided via sp.codes"
-  idx.t.spcode <- if (is.null(sp.codes)) {
+  txt.t.spcode <- "Turtle species code was not one of the accepted codes provided via sp.codes.file"
+  idx.t.spcode <- if (is.null(sp.codes.file)) {
     integer(0)
   } else {
     .check_character(x, "t", paste0("Data", 2), c(sp.acc.all, NA))

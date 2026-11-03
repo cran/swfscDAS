@@ -10,7 +10,7 @@ library(stringr)
 library(swfscDAS)
 
 ## ----data---------------------------------------------------------------------
-y <- system.file("das_sample.das", package = "swfscDAS")
+y <- system.file("extdata", "das_sample.das", package = "swfscDAS")
 head(readLines(y))
 
 ## ----check, eval=FALSE--------------------------------------------------------
@@ -37,32 +37,32 @@ table(y.proc$Event)
 table(y.proc$Bft)
 
 # Filter for R and E events to extract lat/lon points
-y.proc %>% 
-  filter(Event %in% c("R", "E")) %>% 
-  select(Event, Lat, Lon, Cruise, Mode, EffType) %>% 
+y.proc |> 
+  filter(Event %in% c("R", "E")) |> 
+  select(Event, Lat, Lon, Cruise, Mode, EffType) |> 
   head()
 
 ## ----sight--------------------------------------------------------------------
 y.sight <- das_sight(y.proc, return.format = "default")
-y.sight %>% 
-  select(Event, SightNo:PerpDistKm) %>% 
+y.sight |> 
+  select(Event, SightNo:PerpDistKm) |> 
   glimpse()
 
 y.sight.wide <- das_sight(y.proc, return.format = "wide")
-y.sight.wide %>% 
-  select(Event, SightNo:PerpDistKm) %>% 
+y.sight.wide |> 
+  select(Event, SightNo:PerpDistKm) |> 
   glimpse()
 
 y.sight.complete <- das_sight(y.proc, return.format = "complete")
-y.sight.complete %>% 
-  select(Event, SightNo:PerpDistKm) %>% 
+y.sight.complete |> 
+  select(Event, SightNo:PerpDistKm) |> 
   glimpse()
 
 ## ----sight2-------------------------------------------------------------------
 y.sight.sg <- das_sight(y.proc, return.events = c("S", "G"))
 
 # Note that this is equivalent to:
-y.sight.sg2 <- das_sight(y.proc) %>% filter(Event %in% c("S", "G"))
+y.sight.sg2 <- das_sight(y.proc) |> filter(Event %in% c("S", "G"))
 
 ## ----eff----------------------------------------------------------------------
 # Chop the effort into 10km segments
@@ -84,7 +84,7 @@ glimpse(y.eff.sight$segdata)
 glimpse(y.eff.sight$sightinfo)
 
 ## ----strata_int---------------------------------------------------------------
-stratum.file <- system.file("das_sample_stratum.csv", package = "swfscDAS")
+stratum.file <- system.file("extdata", "das_sample_stratum.csv", package = "swfscDAS")
 y.eff.sight.strata <- das_intersects_strata(y.eff.sight, list(InPoly = stratum.file))
 
 glimpse(y.eff.sight.strata$segdata)
@@ -107,5 +107,6 @@ glimpse(y.eff.strata.section$segdata)
 y.comm <- das_comments(y.proc)
 glimpse(select(y.comm, Event, line_num, comment_str))
 
-y.comm[str_detect(y.comm$comment_str, "gear"), ] #Could also use grepl() here
+y.comm |> 
+  filter(str_detect(comment_str, "gear")) #Could also use grepl() here
 

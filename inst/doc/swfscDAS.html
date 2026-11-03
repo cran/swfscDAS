@@ -48,8 +48,9 @@ overflow: visible;
 }
 </style>
 <style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -60,7 +61,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -359,7 +360,7 @@ out event-specific information from the Data (Field) columns.</p>
 <h2>Data</h2>
 <p>This package includes a sample DAS file, which we will use in this
 document</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;das_sample.das&quot;</span>, <span class="at">package =</span> <span class="st">&quot;swfscDAS&quot;</span>)</span>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;das_sample.das&quot;</span>, <span class="at">package =</span> <span class="st">&quot;swfscDAS&quot;</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">readLines</span>(y))</span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt; [1] &quot;1  B.062739 011313 N39:19.22 W137:36.26 1000    c    5    Y                              &quot;</span></span>
 <span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt; [2] &quot;2  R.062739 011313 N39:19.22 W137:36.26    S                                             &quot;</span></span>
@@ -438,7 +439,7 @@ sequence to off effort at the beginning of a new day.</p>
 <span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a>y.proc <span class="ot">&lt;-</span> <span class="fu">das_process</span>(y)</span>
 <span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a><span class="fu">glimpse</span>(y.proc)</span>
 <span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a><span class="co">#&gt; Rows: 256</span></span>
-<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a><span class="co">#&gt; Columns: 40</span></span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a><span class="co">#&gt; Columns: 43</span></span>
 <span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a><span class="co">#&gt; $ Event     &lt;chr&gt; &quot;B&quot;, &quot;R&quot;, &quot;P&quot;, &quot;V&quot;, &quot;N&quot;, &quot;W&quot;, &quot;V&quot;, &quot;W&quot;, &quot;W&quot;, &quot;*&quot;, &quot;P&quot;, &quot;V&quot;, …</span></span>
 <span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a><span class="co">#&gt; $ DateTime  &lt;dttm&gt; 2013-01-13 06:27:39, 2013-01-13 06:27:39, 2013-01-13 06:27:…</span></span>
 <span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a><span class="co">#&gt; $ Lat       &lt;dbl&gt; 39.32033, 39.32033, 39.32033, 39.32033, 39.32033, 39.32033, …</span></span>
@@ -449,39 +450,42 @@ sequence to off effort at the beginning of a new day.</p>
 <span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a><span class="co">#&gt; $ OffsetGMT &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, …</span></span>
 <span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a><span class="co">#&gt; $ EffType   &lt;chr&gt; NA, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;…</span></span>
 <span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a><span class="co">#&gt; $ ESWsides  &lt;dbl&gt; NA, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,…</span></span>
-<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a><span class="co">#&gt; $ Course    &lt;dbl&gt; NA, NA, NA, NA, 23, 23, 23, 23, 23, 23, 23, 23, 25, 25, 25, …</span></span>
-<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a><span class="co">#&gt; $ SpdKt     &lt;dbl&gt; NA, NA, NA, NA, 9.8, 9.8, 9.8, 9.8, 9.8, 9.8, 9.8, 9.8, 10.2…</span></span>
-<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a><span class="co">#&gt; $ Bft       &lt;dbl&gt; NA, NA, NA, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, …</span></span>
-<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a><span class="co">#&gt; $ SwellHght &lt;dbl&gt; NA, NA, NA, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, …</span></span>
-<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a><span class="co">#&gt; $ WindSpdKt &lt;dbl&gt; NA, NA, NA, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, …</span></span>
-<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a><span class="co">#&gt; $ RainFog   &lt;dbl&gt; NA, NA, NA, NA, NA, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…</span></span>
-<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a><span class="co">#&gt; $ HorizSun  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, N…</span></span>
-<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a><span class="co">#&gt; $ VertSun   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, NA, NA, NA, N…</span></span>
-<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a><span class="co">#&gt; $ Glare     &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, FALSE, NA, NA, NA, NA, NA, NA, N…</span></span>
-<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a><span class="co">#&gt; $ Vis       &lt;dbl&gt; NA, NA, NA, NA, NA, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6…</span></span>
-<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a><span class="co">#&gt; $ ObsL      &lt;chr&gt; NA, NA, &quot;280&quot;, &quot;280&quot;, &quot;280&quot;, &quot;280&quot;, &quot;280&quot;, &quot;280&quot;, &quot;280&quot;, &quot;28…</span></span>
-<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a><span class="co">#&gt; $ Rec       &lt;chr&gt; NA, NA, &quot;001&quot;, &quot;001&quot;, &quot;001&quot;, &quot;001&quot;, &quot;001&quot;, &quot;001&quot;, &quot;001&quot;, &quot;00…</span></span>
-<span id="cb4-54"><a href="#cb4-54" tabindex="-1"></a><span class="co">#&gt; $ ObsR      &lt;chr&gt; NA, NA, &quot;126&quot;, &quot;126&quot;, &quot;126&quot;, &quot;126&quot;, &quot;126&quot;, &quot;126&quot;, &quot;126&quot;, &quot;12…</span></span>
-<span id="cb4-55"><a href="#cb4-55" tabindex="-1"></a><span class="co">#&gt; $ ObsInd    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</span></span>
-<span id="cb4-56"><a href="#cb4-56" tabindex="-1"></a><span class="co">#&gt; $ Data1     &lt;chr&gt; &quot;1000&quot;, &quot;S&quot;, &quot;280&quot;, &quot;3&quot;, &quot;023&quot;, &quot;1&quot;, &quot;3&quot;, &quot;1&quot;, &quot;1&quot;, NA, &quot;208…</span></span>
-<span id="cb4-57"><a href="#cb4-57" tabindex="-1"></a><span class="co">#&gt; $ Data2     &lt;chr&gt; &quot;c&quot;, NA, &quot;001&quot;, &quot;03&quot;, &quot;09.8&quot;, NA, &quot;03&quot;, &quot;02&quot;, NA, NA, &quot;280&quot;,…</span></span>
-<span id="cb4-58"><a href="#cb4-58" tabindex="-1"></a><span class="co">#&gt; $ Data3     &lt;chr&gt; &quot;5&quot;, NA, &quot;126&quot;, &quot;230&quot;, NA, NA, &quot;230&quot;, &quot;03&quot;, NA, NA, &quot;001&quot;, &quot;…</span></span>
-<span id="cb4-59"><a href="#cb4-59" tabindex="-1"></a><span class="co">#&gt; $ Data4     &lt;chr&gt; &quot;Y&quot;, NA, NA, NA, NA, &quot;250&quot;, NA, &quot;257&quot;, &quot;257&quot;, NA, NA, NA, NA…</span></span>
-<span id="cb4-60"><a href="#cb4-60" tabindex="-1"></a><span class="co">#&gt; $ Data5     &lt;chr&gt; NA, NA, NA, &quot;10.0&quot;, NA, &quot;6.0&quot;, &quot;10.0&quot;, &quot;6.0&quot;, &quot;6.0&quot;, NA, NA,…</span></span>
-<span id="cb4-61"><a href="#cb4-61" tabindex="-1"></a><span class="co">#&gt; $ Data6     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, &quot;2.8…</span></span>
-<span id="cb4-62"><a href="#cb4-62" tabindex="-1"></a><span class="co">#&gt; $ Data7     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, &quot;1.0…</span></span>
-<span id="cb4-63"><a href="#cb4-63" tabindex="-1"></a><span class="co">#&gt; $ Data8     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, &quot;013…</span></span>
-<span id="cb4-64"><a href="#cb4-64" tabindex="-1"></a><span class="co">#&gt; $ Data9     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</span></span>
-<span id="cb4-65"><a href="#cb4-65" tabindex="-1"></a><span class="co">#&gt; $ Data10    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</span></span>
-<span id="cb4-66"><a href="#cb4-66" tabindex="-1"></a><span class="co">#&gt; $ Data11    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</span></span>
-<span id="cb4-67"><a href="#cb4-67" tabindex="-1"></a><span class="co">#&gt; $ Data12    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</span></span>
-<span id="cb4-68"><a href="#cb4-68" tabindex="-1"></a><span class="co">#&gt; $ EffortDot &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, …</span></span>
-<span id="cb4-69"><a href="#cb4-69" tabindex="-1"></a><span class="co">#&gt; $ EventNum  &lt;chr&gt; &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;6&quot;, &quot;7&quot;, &quot;8&quot;, &quot;9&quot;, &quot;10&quot;, &quot;11&quot;, &quot;12…</span></span>
-<span id="cb4-70"><a href="#cb4-70" tabindex="-1"></a><span class="co">#&gt; $ file_das  &lt;chr&gt; &quot;das_sample.das&quot;, &quot;das_sample.das&quot;, &quot;das_sample.das&quot;, &quot;das_s…</span></span>
-<span id="cb4-71"><a href="#cb4-71" tabindex="-1"></a><span class="co">#&gt; $ line_num  &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 1…</span></span>
-<span id="cb4-72"><a href="#cb4-72" tabindex="-1"></a></span>
-<span id="cb4-73"><a href="#cb4-73" tabindex="-1"></a><span class="co"># Note that das_read can read multiple files at once</span></span>
-<span id="cb4-74"><a href="#cb4-74" tabindex="-1"></a>y2.read <span class="ot">&lt;-</span> <span class="fu">das_read</span>(<span class="fu">c</span>(y, y))</span></code></pre></div>
+<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a><span class="co">#&gt; $ Trackline &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</span></span>
+<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a><span class="co">#&gt; $ Course    &lt;dbl&gt; NA, NA, NA, NA, 23, 23, 23, 23, 23, 23, 23, 23, 25, 25, 25, …</span></span>
+<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a><span class="co">#&gt; $ SpdKt     &lt;dbl&gt; NA, NA, NA, NA, 9.8, 9.8, 9.8, 9.8, 9.8, 9.8, 9.8, 9.8, 10.2…</span></span>
+<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a><span class="co">#&gt; $ Bft       &lt;dbl&gt; NA, NA, NA, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, …</span></span>
+<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a><span class="co">#&gt; $ SwellHght &lt;dbl&gt; NA, NA, NA, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, …</span></span>
+<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a><span class="co">#&gt; $ SwellDir  &lt;dbl&gt; NA, NA, NA, 230, 230, 230, 230, 230, 230, 230, 230, 230, 230…</span></span>
+<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a><span class="co">#&gt; $ WindSpdKt &lt;dbl&gt; NA, NA, NA, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, …</span></span>
+<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a><span class="co">#&gt; $ WindDir   &lt;dbl&gt; NA, NA, NA, NA, NA, 250, 250, 257, 257, 257, 257, 257, 257, …</span></span>
+<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a><span class="co">#&gt; $ RainFog   &lt;dbl&gt; NA, NA, NA, NA, NA, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…</span></span>
+<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a><span class="co">#&gt; $ HorizSun  &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, 2, NA, NA, NA, NA, NA, NA, NA, N…</span></span>
+<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a><span class="co">#&gt; $ VertSun   &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, 3, NA, NA, NA, NA, NA, NA, NA, N…</span></span>
+<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a><span class="co">#&gt; $ Glare     &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, FALSE, NA, NA, NA, NA, NA, NA, N…</span></span>
+<span id="cb4-54"><a href="#cb4-54" tabindex="-1"></a><span class="co">#&gt; $ Vis       &lt;dbl&gt; NA, NA, NA, NA, NA, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6…</span></span>
+<span id="cb4-55"><a href="#cb4-55" tabindex="-1"></a><span class="co">#&gt; $ ObsL      &lt;chr&gt; NA, NA, &quot;280&quot;, &quot;280&quot;, &quot;280&quot;, &quot;280&quot;, &quot;280&quot;, &quot;280&quot;, &quot;280&quot;, &quot;28…</span></span>
+<span id="cb4-56"><a href="#cb4-56" tabindex="-1"></a><span class="co">#&gt; $ Rec       &lt;chr&gt; NA, NA, &quot;001&quot;, &quot;001&quot;, &quot;001&quot;, &quot;001&quot;, &quot;001&quot;, &quot;001&quot;, &quot;001&quot;, &quot;00…</span></span>
+<span id="cb4-57"><a href="#cb4-57" tabindex="-1"></a><span class="co">#&gt; $ ObsR      &lt;chr&gt; NA, NA, &quot;126&quot;, &quot;126&quot;, &quot;126&quot;, &quot;126&quot;, &quot;126&quot;, &quot;126&quot;, &quot;126&quot;, &quot;12…</span></span>
+<span id="cb4-58"><a href="#cb4-58" tabindex="-1"></a><span class="co">#&gt; $ ObsInd    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</span></span>
+<span id="cb4-59"><a href="#cb4-59" tabindex="-1"></a><span class="co">#&gt; $ Data1     &lt;chr&gt; &quot;1000&quot;, &quot;S&quot;, &quot;280&quot;, &quot;3&quot;, &quot;023&quot;, &quot;1&quot;, &quot;3&quot;, &quot;1&quot;, &quot;1&quot;, NA, &quot;208…</span></span>
+<span id="cb4-60"><a href="#cb4-60" tabindex="-1"></a><span class="co">#&gt; $ Data2     &lt;chr&gt; &quot;c&quot;, NA, &quot;001&quot;, &quot;03&quot;, &quot;09.8&quot;, NA, &quot;03&quot;, &quot;02&quot;, NA, NA, &quot;280&quot;,…</span></span>
+<span id="cb4-61"><a href="#cb4-61" tabindex="-1"></a><span class="co">#&gt; $ Data3     &lt;chr&gt; &quot;5&quot;, NA, &quot;126&quot;, &quot;230&quot;, NA, NA, &quot;230&quot;, &quot;03&quot;, NA, NA, &quot;001&quot;, &quot;…</span></span>
+<span id="cb4-62"><a href="#cb4-62" tabindex="-1"></a><span class="co">#&gt; $ Data4     &lt;chr&gt; &quot;Y&quot;, NA, NA, NA, NA, &quot;250&quot;, NA, &quot;257&quot;, &quot;257&quot;, NA, NA, NA, NA…</span></span>
+<span id="cb4-63"><a href="#cb4-63" tabindex="-1"></a><span class="co">#&gt; $ Data5     &lt;chr&gt; NA, NA, NA, &quot;10.0&quot;, NA, &quot;6.0&quot;, &quot;10.0&quot;, &quot;6.0&quot;, &quot;6.0&quot;, NA, NA,…</span></span>
+<span id="cb4-64"><a href="#cb4-64" tabindex="-1"></a><span class="co">#&gt; $ Data6     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, &quot;2.8…</span></span>
+<span id="cb4-65"><a href="#cb4-65" tabindex="-1"></a><span class="co">#&gt; $ Data7     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, &quot;1.0…</span></span>
+<span id="cb4-66"><a href="#cb4-66" tabindex="-1"></a><span class="co">#&gt; $ Data8     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, &quot;013…</span></span>
+<span id="cb4-67"><a href="#cb4-67" tabindex="-1"></a><span class="co">#&gt; $ Data9     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</span></span>
+<span id="cb4-68"><a href="#cb4-68" tabindex="-1"></a><span class="co">#&gt; $ Data10    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</span></span>
+<span id="cb4-69"><a href="#cb4-69" tabindex="-1"></a><span class="co">#&gt; $ Data11    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</span></span>
+<span id="cb4-70"><a href="#cb4-70" tabindex="-1"></a><span class="co">#&gt; $ Data12    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</span></span>
+<span id="cb4-71"><a href="#cb4-71" tabindex="-1"></a><span class="co">#&gt; $ EffortDot &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, …</span></span>
+<span id="cb4-72"><a href="#cb4-72" tabindex="-1"></a><span class="co">#&gt; $ EventNum  &lt;chr&gt; &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;6&quot;, &quot;7&quot;, &quot;8&quot;, &quot;9&quot;, &quot;10&quot;, &quot;11&quot;, &quot;12…</span></span>
+<span id="cb4-73"><a href="#cb4-73" tabindex="-1"></a><span class="co">#&gt; $ file_das  &lt;chr&gt; &quot;das_sample.das&quot;, &quot;das_sample.das&quot;, &quot;das_sample.das&quot;, &quot;das_s…</span></span>
+<span id="cb4-74"><a href="#cb4-74" tabindex="-1"></a><span class="co">#&gt; $ line_num  &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 1…</span></span>
+<span id="cb4-75"><a href="#cb4-75" tabindex="-1"></a></span>
+<span id="cb4-76"><a href="#cb4-76" tabindex="-1"></a><span class="co"># Note that das_read can read multiple files at once</span></span>
+<span id="cb4-77"><a href="#cb4-77" tabindex="-1"></a>y2.read <span class="ot">&lt;-</span> <span class="fu">das_read</span>(<span class="fu">c</span>(y, y))</span></code></pre></div>
 <p>Once you have processed the DAS data, you can easily access a variety
 of information. For instance, you can look at the different events or
 Beaufort values that occurred in the data, or filter for specific events
@@ -499,9 +503,9 @@ to get the beginning and ending points of each effort section.</p>
 <span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt;  94 120</span></span>
 <span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a></span>
 <span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co"># Filter for R and E events to extract lat/lon points</span></span>
-<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>y.proc <span class="sc">%&gt;%</span> </span>
-<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>  <span class="fu">filter</span>(Event <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;R&quot;</span>, <span class="st">&quot;E&quot;</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>  <span class="fu">select</span>(Event, Lat, Lon, Cruise, Mode, EffType) <span class="sc">%&gt;%</span> </span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>y.proc <span class="sc">|&gt;</span> </span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>  <span class="fu">filter</span>(Event <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;R&quot;</span>, <span class="st">&quot;E&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>  <span class="fu">select</span>(Event, Lat, Lon, Cruise, Mode, EffType) <span class="sc">|&gt;</span> </span>
 <span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>  <span class="fu">head</span>()</span>
 <span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt;   Event      Lat       Lon Cruise Mode EffType</span></span>
 <span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a><span class="co">#&gt; 1     R 39.32033 -137.6043   1000    C       S</span></span>
@@ -527,8 +531,8 @@ for more details. The “complete” format is intended for users looking to
 do observer corrections, or to combine estimates using a different
 method than the arithmetic mean (e.g. the geometric mean)</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>y.sight <span class="ot">&lt;-</span> <span class="fu">das_sight</span>(y.proc, <span class="at">return.format =</span> <span class="st">&quot;default&quot;</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>y.sight <span class="sc">%&gt;%</span> </span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">select</span>(Event, SightNo<span class="sc">:</span>PerpDistKm) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>y.sight <span class="sc">|&gt;</span> </span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">select</span>(Event, SightNo<span class="sc">:</span>PerpDistKm) <span class="sc">|&gt;</span> </span>
 <span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span>
 <span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt; Rows: 25</span></span>
 <span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt; Columns: 32</span></span>
@@ -566,8 +570,8 @@ method than the arithmetic mean (e.g. the geometric mean)</p>
 <span id="cb6-38"><a href="#cb6-38" tabindex="-1"></a><span class="co">#&gt; $ PerpDistKm   &lt;dbl&gt; 1.525631e+00, 3.075807e+00, 4.593917e-01, 1.452712e-01, 7…</span></span>
 <span id="cb6-39"><a href="#cb6-39" tabindex="-1"></a></span>
 <span id="cb6-40"><a href="#cb6-40" tabindex="-1"></a>y.sight.wide <span class="ot">&lt;-</span> <span class="fu">das_sight</span>(y.proc, <span class="at">return.format =</span> <span class="st">&quot;wide&quot;</span>)</span>
-<span id="cb6-41"><a href="#cb6-41" tabindex="-1"></a>y.sight.wide <span class="sc">%&gt;%</span> </span>
-<span id="cb6-42"><a href="#cb6-42" tabindex="-1"></a>  <span class="fu">select</span>(Event, SightNo<span class="sc">:</span>PerpDistKm) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-41"><a href="#cb6-41" tabindex="-1"></a>y.sight.wide <span class="sc">|&gt;</span> </span>
+<span id="cb6-42"><a href="#cb6-42" tabindex="-1"></a>  <span class="fu">select</span>(Event, SightNo<span class="sc">:</span>PerpDistKm) <span class="sc">|&gt;</span> </span>
 <span id="cb6-43"><a href="#cb6-43" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span>
 <span id="cb6-44"><a href="#cb6-44" tabindex="-1"></a><span class="co">#&gt; Rows: 22</span></span>
 <span id="cb6-45"><a href="#cb6-45" tabindex="-1"></a><span class="co">#&gt; Columns: 58</span></span>
@@ -631,8 +635,8 @@ method than the arithmetic mean (e.g. the geometric mean)</p>
 <span id="cb6-103"><a href="#cb6-103" tabindex="-1"></a><span class="co">#&gt; $ PerpDistKm   &lt;dbl&gt; 1.525631e+00, 3.075807e+00, 4.593917e-01, 1.452712e-01, 7…</span></span>
 <span id="cb6-104"><a href="#cb6-104" tabindex="-1"></a></span>
 <span id="cb6-105"><a href="#cb6-105" tabindex="-1"></a>y.sight.complete <span class="ot">&lt;-</span> <span class="fu">das_sight</span>(y.proc, <span class="at">return.format =</span> <span class="st">&quot;complete&quot;</span>)</span>
-<span id="cb6-106"><a href="#cb6-106" tabindex="-1"></a>y.sight.complete <span class="sc">%&gt;%</span> </span>
-<span id="cb6-107"><a href="#cb6-107" tabindex="-1"></a>  <span class="fu">select</span>(Event, SightNo<span class="sc">:</span>PerpDistKm) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-106"><a href="#cb6-106" tabindex="-1"></a>y.sight.complete <span class="sc">|&gt;</span> </span>
+<span id="cb6-107"><a href="#cb6-107" tabindex="-1"></a>  <span class="fu">select</span>(Event, SightNo<span class="sc">:</span>PerpDistKm) <span class="sc">|&gt;</span> </span>
 <span id="cb6-108"><a href="#cb6-108" tabindex="-1"></a>  <span class="fu">glimpse</span>()</span>
 <span id="cb6-109"><a href="#cb6-109" tabindex="-1"></a><span class="co">#&gt; Rows: 37</span></span>
 <span id="cb6-110"><a href="#cb6-110" tabindex="-1"></a><span class="co">#&gt; Columns: 46</span></span>
@@ -687,7 +691,7 @@ desired event code(s)</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>y.sight.sg <span class="ot">&lt;-</span> <span class="fu">das_sight</span>(y.proc, <span class="at">return.events =</span> <span class="fu">c</span>(<span class="st">&quot;S&quot;</span>, <span class="st">&quot;G&quot;</span>))</span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co"># Note that this is equivalent to:</span></span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>y.sight.sg2 <span class="ot">&lt;-</span> <span class="fu">das_sight</span>(y.proc) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Event <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;S&quot;</span>, <span class="st">&quot;G&quot;</span>))</span></code></pre></div>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>y.sight.sg2 <span class="ot">&lt;-</span> <span class="fu">das_sight</span>(y.proc) <span class="sc">|&gt;</span> <span class="fu">filter</span>(Event <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;S&quot;</span>, <span class="st">&quot;G&quot;</span>))</span></code></pre></div>
 </div>
 <div id="effort" class="section level2">
 <h2>Effort</h2>
@@ -734,7 +738,7 @@ chop/split effort lines by strata.</p>
 <span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a></span>
 <span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="fu">glimpse</span>(y.eff.sight<span class="sc">$</span>segdata)</span>
 <span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#&gt; Rows: 20</span></span>
-<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt; Columns: 32</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt; Columns: 33</span></span>
 <span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co">#&gt; $ segnum           &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16…</span></span>
 <span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="co">#&gt; $ section_id       &lt;int&gt; 1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 4, 4, 5, 6, 6, 7, 7, 8,…</span></span>
 <span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a><span class="co">#&gt; $ section_sub_id   &lt;dbl&gt; 1, 1, 2, 1, 2, 3, 4, 5, 6, 7, 1, 2, 1, 1, 2, 1, 2, 1,…</span></span>
@@ -760,81 +764,95 @@ chop/split effort lines by strata.</p>
 <span id="cb8-41"><a href="#cb8-41" tabindex="-1"></a><span class="co">#&gt; $ OffsetGMT        &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…</span></span>
 <span id="cb8-42"><a href="#cb8-42" tabindex="-1"></a><span class="co">#&gt; $ EffType          &lt;chr&gt; &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;…</span></span>
 <span id="cb8-43"><a href="#cb8-43" tabindex="-1"></a><span class="co">#&gt; $ ESWsides         &lt;dbl&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,…</span></span>
-<span id="cb8-44"><a href="#cb8-44" tabindex="-1"></a><span class="co">#&gt; $ maxdistBft       &lt;dbl&gt; 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 3, 3, 3, 3, 2, 3, 2, 2,…</span></span>
-<span id="cb8-45"><a href="#cb8-45" tabindex="-1"></a><span class="co">#&gt; $ maxdistSwellHght &lt;dbl&gt; 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,…</span></span>
-<span id="cb8-46"><a href="#cb8-46" tabindex="-1"></a><span class="co">#&gt; $ maxdistVis       &lt;dbl&gt; 6.0, 6.0, 5.5, 5.5, 6.0, 6.0, 5.5, 4.5, 3.5, 2.5, 5.8…</span></span>
-<span id="cb8-47"><a href="#cb8-47" tabindex="-1"></a><span class="co">#&gt; $ nSI_018          &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</span></span>
-<span id="cb8-48"><a href="#cb8-48" tabindex="-1"></a><span class="co">#&gt; $ ANI_018          &lt;dbl&gt; 42.33333, 0.00000, 0.00000, 0.00000, 0.00000, 0.00000…</span></span>
-<span id="cb8-49"><a href="#cb8-49" tabindex="-1"></a><span class="co">#&gt; $ nSI_076          &lt;dbl&gt; 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</span></span>
-<span id="cb8-50"><a href="#cb8-50" tabindex="-1"></a><span class="co">#&gt; $ ANI_076          &lt;dbl&gt; 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</span></span>
-<span id="cb8-51"><a href="#cb8-51" tabindex="-1"></a></span>
-<span id="cb8-52"><a href="#cb8-52" tabindex="-1"></a><span class="fu">glimpse</span>(y.eff.sight<span class="sc">$</span>sightinfo)</span>
-<span id="cb8-53"><a href="#cb8-53" tabindex="-1"></a><span class="co">#&gt; Rows: 13</span></span>
-<span id="cb8-54"><a href="#cb8-54" tabindex="-1"></a><span class="co">#&gt; Columns: 64</span></span>
-<span id="cb8-55"><a href="#cb8-55" tabindex="-1"></a><span class="co">#&gt; $ segnum       &lt;int&gt; 1, 3, 4, 13, 13, 15, 17, 18, 18, 20, 20, 20, 20</span></span>
-<span id="cb8-56"><a href="#cb8-56" tabindex="-1"></a><span class="co">#&gt; $ mlat         &lt;dbl&gt; 39.34377, 39.47435, 39.61433, 40.20895, 40.20895, 40.3483…</span></span>
-<span id="cb8-57"><a href="#cb8-57" tabindex="-1"></a><span class="co">#&gt; $ mlon         &lt;dbl&gt; -137.5930, -137.5493, -137.4327, -137.1531, -137.1531, -1…</span></span>
-<span id="cb8-58"><a href="#cb8-58" tabindex="-1"></a><span class="co">#&gt; $ Event        &lt;chr&gt; &quot;S&quot;, &quot;S&quot;, &quot;t&quot;, &quot;t&quot;, &quot;S&quot;, &quot;t&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S…</span></span>
-<span id="cb8-59"><a href="#cb8-59" tabindex="-1"></a><span class="co">#&gt; $ DateTime     &lt;dttm&gt; 2013-01-13 06:46:02, 2013-01-13 07:56:22, 2013-01-13 09:3…</span></span>
-<span id="cb8-60"><a href="#cb8-60" tabindex="-1"></a><span class="co">#&gt; $ year         &lt;dbl&gt; 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 20…</span></span>
-<span id="cb8-61"><a href="#cb8-61" tabindex="-1"></a><span class="co">#&gt; $ Lat          &lt;dbl&gt; 39.36617, 39.51767, 39.59733, 40.18283, 40.26567, 40.3605…</span></span>
-<span id="cb8-62"><a href="#cb8-62" tabindex="-1"></a><span class="co">#&gt; $ Lon          &lt;dbl&gt; -137.5820, -137.5285, -137.4400, -137.1622, -137.1350, -1…</span></span>
-<span id="cb8-63"><a href="#cb8-63" tabindex="-1"></a><span class="co">#&gt; $ OnEffort     &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRU…</span></span>
-<span id="cb8-64"><a href="#cb8-64" tabindex="-1"></a><span class="co">#&gt; $ Cruise       &lt;dbl&gt; 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 100…</span></span>
-<span id="cb8-65"><a href="#cb8-65" tabindex="-1"></a><span class="co">#&gt; $ Mode         &lt;chr&gt; &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C…</span></span>
-<span id="cb8-66"><a href="#cb8-66" tabindex="-1"></a><span class="co">#&gt; $ OffsetGMT    &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5</span></span>
-<span id="cb8-67"><a href="#cb8-67" tabindex="-1"></a><span class="co">#&gt; $ EffType      &lt;chr&gt; &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S…</span></span>
-<span id="cb8-68"><a href="#cb8-68" tabindex="-1"></a><span class="co">#&gt; $ ESWsides     &lt;dbl&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2</span></span>
-<span id="cb8-69"><a href="#cb8-69" tabindex="-1"></a><span class="co">#&gt; $ Course       &lt;dbl&gt; 25, 26, 27, 20, 20, 16, 25, 30, 30, 23, 23, 23, 23</span></span>
-<span id="cb8-70"><a href="#cb8-70" tabindex="-1"></a><span class="co">#&gt; $ SpdKt        &lt;dbl&gt; 10.2, 9.7, 9.0, 9.3, 9.3, 8.9, 8.9, 9.5, 9.5, 9.6, 9.6, 9…</span></span>
-<span id="cb8-71"><a href="#cb8-71" tabindex="-1"></a><span class="co">#&gt; $ Bft          &lt;dbl&gt; 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2</span></span>
-<span id="cb8-72"><a href="#cb8-72" tabindex="-1"></a><span class="co">#&gt; $ SwellHght    &lt;dbl&gt; 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1</span></span>
-<span id="cb8-73"><a href="#cb8-73" tabindex="-1"></a><span class="co">#&gt; $ WindSpdKt    &lt;dbl&gt; 10, 10, 10, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5</span></span>
-<span id="cb8-74"><a href="#cb8-74" tabindex="-1"></a><span class="co">#&gt; $ RainFog      &lt;dbl&gt; 1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3</span></span>
-<span id="cb8-75"><a href="#cb8-75" tabindex="-1"></a><span class="co">#&gt; $ HorizSun     &lt;dbl&gt; NA, 2, 2, 8, 8, 9, 8, 8, 8, NA, NA, NA, NA</span></span>
-<span id="cb8-76"><a href="#cb8-76" tabindex="-1"></a><span class="co">#&gt; $ VertSun      &lt;dbl&gt; NA, 2, 2, 1, 1, 1, 2, 2, 2, NA, NA, NA, NA</span></span>
-<span id="cb8-77"><a href="#cb8-77" tabindex="-1"></a><span class="co">#&gt; $ Glare        &lt;lgl&gt; NA, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALS…</span></span>
-<span id="cb8-78"><a href="#cb8-78" tabindex="-1"></a><span class="co">#&gt; $ Vis          &lt;dbl&gt; 6.0, 5.5, 5.5, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 4.0, 4.0, 4.…</span></span>
-<span id="cb8-79"><a href="#cb8-79" tabindex="-1"></a><span class="co">#&gt; $ ObsL         &lt;chr&gt; &quot;208&quot;, &quot;125&quot;, &quot;001&quot;, &quot;280&quot;, &quot;280&quot;, &quot;125&quot;, &quot;149&quot;, &quot;126&quot;, &quot;…</span></span>
-<span id="cb8-80"><a href="#cb8-80" tabindex="-1"></a><span class="co">#&gt; $ Rec          &lt;chr&gt; &quot;280&quot;, &quot;208&quot;, &quot;126&quot;, &quot;001&quot;, &quot;001&quot;, &quot;208&quot;, &quot;125&quot;, &quot;149&quot;, &quot;…</span></span>
-<span id="cb8-81"><a href="#cb8-81" tabindex="-1"></a><span class="co">#&gt; $ ObsR         &lt;chr&gt; &quot;001&quot;, &quot;280&quot;, &quot;149&quot;, &quot;126&quot;, &quot;126&quot;, &quot;280&quot;, &quot;208&quot;, &quot;125&quot;, &quot;…</span></span>
-<span id="cb8-82"><a href="#cb8-82" tabindex="-1"></a><span class="co">#&gt; $ ObsInd       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
-<span id="cb8-83"><a href="#cb8-83" tabindex="-1"></a><span class="co">#&gt; $ EffortDot    &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRU…</span></span>
-<span id="cb8-84"><a href="#cb8-84" tabindex="-1"></a><span class="co">#&gt; $ EventNum     &lt;chr&gt; &quot;15&quot;, &quot;35&quot;, &quot;59&quot;, &quot;131&quot;, &quot;136&quot;, &quot;153&quot;, &quot;167&quot;, &quot;181&quot;, &quot;181…</span></span>
-<span id="cb8-85"><a href="#cb8-85" tabindex="-1"></a><span class="co">#&gt; $ file_das     &lt;chr&gt; &quot;das_sample.das&quot;, &quot;das_sample.das&quot;, &quot;das_sample.das&quot;, &quot;da…</span></span>
-<span id="cb8-86"><a href="#cb8-86" tabindex="-1"></a><span class="co">#&gt; $ line_num     &lt;int&gt; 15, 38, 65, 137, 142, 162, 176, 193, 193, 248, 248, 252, …</span></span>
-<span id="cb8-87"><a href="#cb8-87" tabindex="-1"></a><span class="co">#&gt; $ SightNo      &lt;chr&gt; &quot;1406&quot;, &quot;1407&quot;, NA, NA, &quot;1408&quot;, NA, &quot;1409&quot;, &quot;1410&quot;, &quot;1410…</span></span>
-<span id="cb8-88"><a href="#cb8-88" tabindex="-1"></a><span class="co">#&gt; $ Subgroup     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
-<span id="cb8-89"><a href="#cb8-89" tabindex="-1"></a><span class="co">#&gt; $ SightNoDaily &lt;chr&gt; &quot;20130113_1&quot;, &quot;20130113_2&quot;, NA, NA, &quot;20130113_3&quot;, NA, &quot;20…</span></span>
-<span id="cb8-90"><a href="#cb8-90" tabindex="-1"></a><span class="co">#&gt; $ Obs          &lt;chr&gt; &quot;208&quot;, &quot;125&quot;, &quot;280&quot;, &quot;228&quot;, &quot;280&quot;, &quot;231&quot;, &quot;149&quot;, &quot;125&quot;, &quot;…</span></span>
-<span id="cb8-91"><a href="#cb8-91" tabindex="-1"></a><span class="co">#&gt; $ ObsStd       &lt;lgl&gt; TRUE, TRUE, FALSE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, …</span></span>
-<span id="cb8-92"><a href="#cb8-92" tabindex="-1"></a><span class="co">#&gt; $ Bearing      &lt;dbl&gt; 309, 326, 120, 300, 270, 45, 344, 70, 70, 359, 359, 38, 38</span></span>
-<span id="cb8-93"><a href="#cb8-93" tabindex="-1"></a><span class="co">#&gt; $ Reticle      &lt;dbl&gt; 2.8, 0.4, NA, NA, 14.0, NA, 0.2, 1.4, 1.4, 0.3, 0.3, 0.8,…</span></span>
-<span id="cb8-94"><a href="#cb8-94" tabindex="-1"></a><span class="co">#&gt; $ DistNm       &lt;dbl&gt; 1.06, 2.97, 0.03, 0.02, 0.28, 0.05, 3.68, 1.66, 1.66, 3.2…</span></span>
-<span id="cb8-95"><a href="#cb8-95" tabindex="-1"></a><span class="co">#&gt; $ Cue          &lt;dbl&gt; 3, 3, NA, NA, 3, NA, 3, 3, 3, 2, 2, 3, 3</span></span>
-<span id="cb8-96"><a href="#cb8-96" tabindex="-1"></a><span class="co">#&gt; $ Method       &lt;dbl&gt; 4, 4, NA, NA, 4, NA, 4, 4, 4, 4, 4, 4, 4</span></span>
-<span id="cb8-97"><a href="#cb8-97" tabindex="-1"></a><span class="co">#&gt; $ Photos       &lt;chr&gt; &quot;N&quot;, &quot;Y&quot;, NA, NA, &quot;N&quot;, NA, &quot;Y&quot;, &quot;Y&quot;, &quot;Y&quot;, &quot;Y&quot;, &quot;Y&quot;, &quot;Y&quot;, …</span></span>
-<span id="cb8-98"><a href="#cb8-98" tabindex="-1"></a><span class="co">#&gt; $ Birds        &lt;chr&gt; &quot;N&quot;, &quot;N&quot;, NA, NA, &quot;N&quot;, NA, &quot;Y&quot;, &quot;N&quot;, &quot;N&quot;, &quot;N&quot;, &quot;N&quot;, &quot;N&quot;, …</span></span>
-<span id="cb8-99"><a href="#cb8-99" tabindex="-1"></a><span class="co">#&gt; $ CalibSchool  &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
-<span id="cb8-100"><a href="#cb8-100" tabindex="-1"></a><span class="co">#&gt; $ PhotosAerial &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
-<span id="cb8-101"><a href="#cb8-101" tabindex="-1"></a><span class="co">#&gt; $ Biopsy       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
-<span id="cb8-102"><a href="#cb8-102" tabindex="-1"></a><span class="co">#&gt; $ Prob         &lt;lgl&gt; FALSE, FALSE, NA, NA, FALSE, NA, FALSE, FALSE, FALSE, FAL…</span></span>
-<span id="cb8-103"><a href="#cb8-103" tabindex="-1"></a><span class="co">#&gt; $ nSp          &lt;int&gt; 1, 1, NA, NA, 1, NA, 1, 2, 2, 2, 2, 2, 2</span></span>
-<span id="cb8-104"><a href="#cb8-104" tabindex="-1"></a><span class="co">#&gt; $ Mixed        &lt;lgl&gt; FALSE, FALSE, NA, NA, FALSE, NA, FALSE, TRUE, TRUE, TRUE,…</span></span>
-<span id="cb8-105"><a href="#cb8-105" tabindex="-1"></a><span class="co">#&gt; $ SpCode       &lt;chr&gt; &quot;018&quot;, &quot;076&quot;, &quot;LV&quot;, &quot;DC&quot;, &quot;037&quot;, &quot;DC&quot;, &quot;016&quot;, &quot;013&quot;, &quot;016…</span></span>
-<span id="cb8-106"><a href="#cb8-106" tabindex="-1"></a><span class="co">#&gt; $ SpCodeProb   &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, &quot;016&quot;, &quot;016&quot;</span></span>
-<span id="cb8-107"><a href="#cb8-107" tabindex="-1"></a><span class="co">#&gt; $ GsSchoolBest &lt;dbl&gt; NA, 8.00000, 1.00000, 1.00000, 10.66667, 1.00000, 46.6666…</span></span>
-<span id="cb8-108"><a href="#cb8-108" tabindex="-1"></a><span class="co">#&gt; $ GsSchoolHigh &lt;dbl&gt; NA, 14.00, NA, NA, 20.00, NA, 79.00, 72.75, 72.75, 249.00…</span></span>
-<span id="cb8-109"><a href="#cb8-109" tabindex="-1"></a><span class="co">#&gt; $ GsSchoolLow  &lt;dbl&gt; 42.333333, 5.666667, NA, NA, 10.666667, NA, 46.666667, 41…</span></span>
-<span id="cb8-110"><a href="#cb8-110" tabindex="-1"></a><span class="co">#&gt; $ GsSpBest     &lt;dbl&gt; NA, 8.00000, 1.00000, 1.00000, 10.66667, 1.00000, 46.6666…</span></span>
-<span id="cb8-111"><a href="#cb8-111" tabindex="-1"></a><span class="co">#&gt; $ GsSpHigh     &lt;dbl&gt; NA, 14.0000, NA, NA, 20.0000, NA, 79.0000, 52.3800, 20.37…</span></span>
-<span id="cb8-112"><a href="#cb8-112" tabindex="-1"></a><span class="co">#&gt; $ GsSpLow      &lt;dbl&gt; 42.333333, 5.666667, NA, NA, 10.666667, NA, 46.666667, 30…</span></span>
-<span id="cb8-113"><a href="#cb8-113" tabindex="-1"></a><span class="co">#&gt; $ CourseSchool &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
-<span id="cb8-114"><a href="#cb8-114" tabindex="-1"></a><span class="co">#&gt; $ TurtleJFR    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
-<span id="cb8-115"><a href="#cb8-115" tabindex="-1"></a><span class="co">#&gt; $ TurtleAge    &lt;chr&gt; NA, NA, &quot;A&quot;, &quot;J&quot;, NA, &quot;A&quot;, NA, NA, NA, NA, NA, NA, NA</span></span>
-<span id="cb8-116"><a href="#cb8-116" tabindex="-1"></a><span class="co">#&gt; $ TurtleCapt   &lt;chr&gt; NA, NA, &quot;N&quot;, &quot;N&quot;, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
-<span id="cb8-117"><a href="#cb8-117" tabindex="-1"></a><span class="co">#&gt; $ PerpDistKm   &lt;dbl&gt; 1.52563078, 3.07580701, 0.04811637, 0.03207758, 0.5185600…</span></span>
-<span id="cb8-118"><a href="#cb8-118" tabindex="-1"></a><span class="co">#&gt; $ included     &lt;lgl&gt; TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FAL…</span></span></code></pre></div>
+<span id="cb8-44"><a href="#cb8-44" tabindex="-1"></a><span class="co">#&gt; $ Trackline        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…</span></span>
+<span id="cb8-45"><a href="#cb8-45" tabindex="-1"></a><span class="co">#&gt; $ maxdistBft       &lt;dbl&gt; 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 3, 3, 3, 3, 2, 3, 2, 2,…</span></span>
+<span id="cb8-46"><a href="#cb8-46" tabindex="-1"></a><span class="co">#&gt; $ maxdistSwellHght &lt;dbl&gt; 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,…</span></span>
+<span id="cb8-47"><a href="#cb8-47" tabindex="-1"></a><span class="co">#&gt; $ maxdistVis       &lt;dbl&gt; 6.0, 6.0, 5.5, 5.5, 6.0, 6.0, 5.5, 4.5, 3.5, 2.5, 5.8…</span></span>
+<span id="cb8-48"><a href="#cb8-48" tabindex="-1"></a><span class="co">#&gt; $ nSI_018          &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</span></span>
+<span id="cb8-49"><a href="#cb8-49" tabindex="-1"></a><span class="co">#&gt; $ ANI_018          &lt;dbl&gt; 42.33333, 0.00000, 0.00000, 0.00000, 0.00000, 0.00000…</span></span>
+<span id="cb8-50"><a href="#cb8-50" tabindex="-1"></a><span class="co">#&gt; $ nSI_076          &lt;dbl&gt; 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</span></span>
+<span id="cb8-51"><a href="#cb8-51" tabindex="-1"></a><span class="co">#&gt; $ ANI_076          &lt;dbl&gt; 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</span></span>
+<span id="cb8-52"><a href="#cb8-52" tabindex="-1"></a></span>
+<span id="cb8-53"><a href="#cb8-53" tabindex="-1"></a><span class="fu">glimpse</span>(y.eff.sight<span class="sc">$</span>sightinfo)</span>
+<span id="cb8-54"><a href="#cb8-54" tabindex="-1"></a><span class="co">#&gt; Rows: 13</span></span>
+<span id="cb8-55"><a href="#cb8-55" tabindex="-1"></a><span class="co">#&gt; Columns: 67</span></span>
+<span id="cb8-56"><a href="#cb8-56" tabindex="-1"></a><span class="co">#&gt; $ segnum       &lt;int&gt; 1, 3, 4, 13, 13, 15, 17, 18, 18, 20, 20, 20, 20</span></span>
+<span id="cb8-57"><a href="#cb8-57" tabindex="-1"></a><span class="co">#&gt; $ mlat         &lt;dbl&gt; 39.34377, 39.47435, 39.61433, 40.20895, 40.20895, 40.3483…</span></span>
+<span id="cb8-58"><a href="#cb8-58" tabindex="-1"></a><span class="co">#&gt; $ mlon         &lt;dbl&gt; -137.5930, -137.5493, -137.4327, -137.1531, -137.1531, -1…</span></span>
+<span id="cb8-59"><a href="#cb8-59" tabindex="-1"></a><span class="co">#&gt; $ Event        &lt;chr&gt; &quot;S&quot;, &quot;S&quot;, &quot;t&quot;, &quot;t&quot;, &quot;S&quot;, &quot;t&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S…</span></span>
+<span id="cb8-60"><a href="#cb8-60" tabindex="-1"></a><span class="co">#&gt; $ DateTime     &lt;dttm&gt; 2013-01-13 06:46:02, 2013-01-13 07:56:22, 2013-01-13 09:3…</span></span>
+<span id="cb8-61"><a href="#cb8-61" tabindex="-1"></a><span class="co">#&gt; $ year         &lt;dbl&gt; 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 2013, 20…</span></span>
+<span id="cb8-62"><a href="#cb8-62" tabindex="-1"></a><span class="co">#&gt; $ Lat          &lt;dbl&gt; 39.36617, 39.51767, 39.59733, 40.18283, 40.26567, 40.3605…</span></span>
+<span id="cb8-63"><a href="#cb8-63" tabindex="-1"></a><span class="co">#&gt; $ Lon          &lt;dbl&gt; -137.5820, -137.5285, -137.4400, -137.1622, -137.1350, -1…</span></span>
+<span id="cb8-64"><a href="#cb8-64" tabindex="-1"></a><span class="co">#&gt; $ OnEffort     &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRU…</span></span>
+<span id="cb8-65"><a href="#cb8-65" tabindex="-1"></a><span class="co">#&gt; $ Cruise       &lt;dbl&gt; 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 100…</span></span>
+<span id="cb8-66"><a href="#cb8-66" tabindex="-1"></a><span class="co">#&gt; $ Mode         &lt;chr&gt; &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C&quot;, &quot;C…</span></span>
+<span id="cb8-67"><a href="#cb8-67" tabindex="-1"></a><span class="co">#&gt; $ OffsetGMT    &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5</span></span>
+<span id="cb8-68"><a href="#cb8-68" tabindex="-1"></a><span class="co">#&gt; $ EffType      &lt;chr&gt; &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S…</span></span>
+<span id="cb8-69"><a href="#cb8-69" tabindex="-1"></a><span class="co">#&gt; $ ESWsides     &lt;dbl&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2</span></span>
+<span id="cb8-70"><a href="#cb8-70" tabindex="-1"></a><span class="co">#&gt; $ Trackline    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
+<span id="cb8-71"><a href="#cb8-71" tabindex="-1"></a><span class="co">#&gt; $ Course       &lt;dbl&gt; 25, 26, 27, 20, 20, 16, 25, 30, 30, 23, 23, 23, 23</span></span>
+<span id="cb8-72"><a href="#cb8-72" tabindex="-1"></a><span class="co">#&gt; $ SpdKt        &lt;dbl&gt; 10.2, 9.7, 9.0, 9.3, 9.3, 8.9, 8.9, 9.5, 9.5, 9.6, 9.6, 9…</span></span>
+<span id="cb8-73"><a href="#cb8-73" tabindex="-1"></a><span class="co">#&gt; $ Bft          &lt;dbl&gt; 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2</span></span>
+<span id="cb8-74"><a href="#cb8-74" tabindex="-1"></a><span class="co">#&gt; $ SwellHght    &lt;dbl&gt; 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1, 1, 1</span></span>
+<span id="cb8-75"><a href="#cb8-75" tabindex="-1"></a><span class="co">#&gt; $ SwellDir     &lt;dbl&gt; 230, 230, 230, 230, 230, 230, 230, 230, 230, 35, 35, 35, …</span></span>
+<span id="cb8-76"><a href="#cb8-76" tabindex="-1"></a><span class="co">#&gt; $ WindSpdKt    &lt;dbl&gt; 10, 10, 10, 6, 6, 6, 6, 6, 6, 5, 5, 5, 5</span></span>
+<span id="cb8-77"><a href="#cb8-77" tabindex="-1"></a><span class="co">#&gt; $ WindDir      &lt;dbl&gt; 257, 257, 257, 257, 257, 243, 243, 243, 243, 40, 40, 40, …</span></span>
+<span id="cb8-78"><a href="#cb8-78" tabindex="-1"></a><span class="co">#&gt; $ RainFog      &lt;dbl&gt; 1, 3, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3</span></span>
+<span id="cb8-79"><a href="#cb8-79" tabindex="-1"></a><span class="co">#&gt; $ HorizSun     &lt;dbl&gt; NA, 2, 2, 8, 8, 9, 8, 8, 8, NA, NA, NA, NA</span></span>
+<span id="cb8-80"><a href="#cb8-80" tabindex="-1"></a><span class="co">#&gt; $ VertSun      &lt;dbl&gt; NA, 2, 2, 1, 1, 1, 2, 2, 2, NA, NA, NA, NA</span></span>
+<span id="cb8-81"><a href="#cb8-81" tabindex="-1"></a><span class="co">#&gt; $ Glare        &lt;lgl&gt; NA, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALS…</span></span>
+<span id="cb8-82"><a href="#cb8-82" tabindex="-1"></a><span class="co">#&gt; $ Vis          &lt;dbl&gt; 6.0, 5.5, 5.5, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 4.0, 4.0, 4.…</span></span>
+<span id="cb8-83"><a href="#cb8-83" tabindex="-1"></a><span class="co">#&gt; $ ObsL         &lt;chr&gt; &quot;208&quot;, &quot;125&quot;, &quot;001&quot;, &quot;280&quot;, &quot;280&quot;, &quot;125&quot;, &quot;149&quot;, &quot;126&quot;, &quot;…</span></span>
+<span id="cb8-84"><a href="#cb8-84" tabindex="-1"></a><span class="co">#&gt; $ Rec          &lt;chr&gt; &quot;280&quot;, &quot;208&quot;, &quot;126&quot;, &quot;001&quot;, &quot;001&quot;, &quot;208&quot;, &quot;125&quot;, &quot;149&quot;, &quot;…</span></span>
+<span id="cb8-85"><a href="#cb8-85" tabindex="-1"></a><span class="co">#&gt; $ ObsR         &lt;chr&gt; &quot;001&quot;, &quot;280&quot;, &quot;149&quot;, &quot;126&quot;, &quot;126&quot;, &quot;280&quot;, &quot;208&quot;, &quot;125&quot;, &quot;…</span></span>
+<span id="cb8-86"><a href="#cb8-86" tabindex="-1"></a><span class="co">#&gt; $ ObsInd       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
+<span id="cb8-87"><a href="#cb8-87" tabindex="-1"></a><span class="co">#&gt; $ EffortDot    &lt;lgl&gt; TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRU…</span></span>
+<span id="cb8-88"><a href="#cb8-88" tabindex="-1"></a><span class="co">#&gt; $ EventNum     &lt;chr&gt; &quot;15&quot;, &quot;35&quot;, &quot;59&quot;, &quot;131&quot;, &quot;136&quot;, &quot;153&quot;, &quot;167&quot;, &quot;181&quot;, &quot;181…</span></span>
+<span id="cb8-89"><a href="#cb8-89" tabindex="-1"></a><span class="co">#&gt; $ file_das     &lt;chr&gt; &quot;das_sample.das&quot;, &quot;das_sample.das&quot;, &quot;das_sample.das&quot;, &quot;da…</span></span>
+<span id="cb8-90"><a href="#cb8-90" tabindex="-1"></a><span class="co">#&gt; $ line_num     &lt;int&gt; 15, 38, 65, 137, 142, 162, 176, 193, 193, 248, 248, 252, …</span></span>
+<span id="cb8-91"><a href="#cb8-91" tabindex="-1"></a><span class="co">#&gt; $ SightNo      &lt;chr&gt; &quot;1406&quot;, &quot;1407&quot;, NA, NA, &quot;1408&quot;, NA, &quot;1409&quot;, &quot;1410&quot;, &quot;1410…</span></span>
+<span id="cb8-92"><a href="#cb8-92" tabindex="-1"></a><span class="co">#&gt; $ Subgroup     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
+<span id="cb8-93"><a href="#cb8-93" tabindex="-1"></a><span class="co">#&gt; $ SightNoDaily &lt;chr&gt; &quot;20130113_1&quot;, &quot;20130113_2&quot;, NA, NA, &quot;20130113_3&quot;, NA, &quot;20…</span></span>
+<span id="cb8-94"><a href="#cb8-94" tabindex="-1"></a><span class="co">#&gt; $ Obs          &lt;chr&gt; &quot;208&quot;, &quot;125&quot;, &quot;280&quot;, &quot;228&quot;, &quot;280&quot;, &quot;231&quot;, &quot;149&quot;, &quot;125&quot;, &quot;…</span></span>
+<span id="cb8-95"><a href="#cb8-95" tabindex="-1"></a><span class="co">#&gt; $ ObsStd       &lt;lgl&gt; TRUE, TRUE, FALSE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, …</span></span>
+<span id="cb8-96"><a href="#cb8-96" tabindex="-1"></a><span class="co">#&gt; $ Bearing      &lt;dbl&gt; 309, 326, 120, 300, 270, 45, 344, 70, 70, 359, 359, 38, 38</span></span>
+<span id="cb8-97"><a href="#cb8-97" tabindex="-1"></a><span class="co">#&gt; $ Reticle      &lt;dbl&gt; 2.8, 0.4, NA, NA, 14.0, NA, 0.2, 1.4, 1.4, 0.3, 0.3, 0.8,…</span></span>
+<span id="cb8-98"><a href="#cb8-98" tabindex="-1"></a><span class="co">#&gt; $ DistNm       &lt;dbl&gt; 1.06, 2.97, 0.03, 0.02, 0.28, 0.05, 3.68, 1.66, 1.66, 3.2…</span></span>
+<span id="cb8-99"><a href="#cb8-99" tabindex="-1"></a><span class="co">#&gt; $ Cue          &lt;dbl&gt; 3, 3, NA, NA, 3, NA, 3, 3, 3, 2, 2, 3, 3</span></span>
+<span id="cb8-100"><a href="#cb8-100" tabindex="-1"></a><span class="co">#&gt; $ Method       &lt;dbl&gt; 4, 4, NA, NA, 4, NA, 4, 4, 4, 4, 4, 4, 4</span></span>
+<span id="cb8-101"><a href="#cb8-101" tabindex="-1"></a><span class="co">#&gt; $ Photos       &lt;chr&gt; &quot;N&quot;, &quot;Y&quot;, NA, NA, &quot;N&quot;, NA, &quot;Y&quot;, &quot;Y&quot;, &quot;Y&quot;, &quot;Y&quot;, &quot;Y&quot;, &quot;Y&quot;, …</span></span>
+<span id="cb8-102"><a href="#cb8-102" tabindex="-1"></a><span class="co">#&gt; $ Birds        &lt;chr&gt; &quot;N&quot;, &quot;N&quot;, NA, NA, &quot;N&quot;, NA, &quot;Y&quot;, &quot;N&quot;, &quot;N&quot;, &quot;N&quot;, &quot;N&quot;, &quot;N&quot;, …</span></span>
+<span id="cb8-103"><a href="#cb8-103" tabindex="-1"></a><span class="co">#&gt; $ CalibSchool  &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
+<span id="cb8-104"><a href="#cb8-104" tabindex="-1"></a><span class="co">#&gt; $ PhotosAerial &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
+<span id="cb8-105"><a href="#cb8-105" tabindex="-1"></a><span class="co">#&gt; $ Biopsy       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
+<span id="cb8-106"><a href="#cb8-106" tabindex="-1"></a><span class="co">#&gt; $ Prob         &lt;lgl&gt; FALSE, FALSE, NA, NA, FALSE, NA, FALSE, FALSE, FALSE, FAL…</span></span>
+<span id="cb8-107"><a href="#cb8-107" tabindex="-1"></a><span class="co">#&gt; $ nSp          &lt;int&gt; 1, 1, NA, NA, 1, NA, 1, 2, 2, 2, 2, 2, 2</span></span>
+<span id="cb8-108"><a href="#cb8-108" tabindex="-1"></a><span class="co">#&gt; $ Mixed        &lt;lgl&gt; FALSE, FALSE, NA, NA, FALSE, NA, FALSE, TRUE, TRUE, TRUE,…</span></span>
+<span id="cb8-109"><a href="#cb8-109" tabindex="-1"></a><span class="co">#&gt; $ SpCode       &lt;chr&gt; &quot;018&quot;, &quot;076&quot;, &quot;LV&quot;, &quot;DC&quot;, &quot;037&quot;, &quot;DC&quot;, &quot;016&quot;, &quot;013&quot;, &quot;016…</span></span>
+<span id="cb8-110"><a href="#cb8-110" tabindex="-1"></a><span class="co">#&gt; $ SpCodeProb   &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, &quot;016&quot;, &quot;016&quot;</span></span>
+<span id="cb8-111"><a href="#cb8-111" tabindex="-1"></a><span class="co">#&gt; $ GsSchoolBest &lt;dbl&gt; NA, 8.00000, 1.00000, 1.00000, 10.66667, 1.00000, 46.6666…</span></span>
+<span id="cb8-112"><a href="#cb8-112" tabindex="-1"></a><span class="co">#&gt; $ GsSchoolHigh &lt;dbl&gt; NA, 14.00, NA, NA, 20.00, NA, 79.00, 72.75, 72.75, 249.00…</span></span>
+<span id="cb8-113"><a href="#cb8-113" tabindex="-1"></a><span class="co">#&gt; $ GsSchoolLow  &lt;dbl&gt; 42.333333, 5.666667, NA, NA, 10.666667, NA, 46.666667, 41…</span></span>
+<span id="cb8-114"><a href="#cb8-114" tabindex="-1"></a><span class="co">#&gt; $ GsSpBest     &lt;dbl&gt; NA, 8.00000, 1.00000, 1.00000, 10.66667, 1.00000, 46.6666…</span></span>
+<span id="cb8-115"><a href="#cb8-115" tabindex="-1"></a><span class="co">#&gt; $ GsSpHigh     &lt;dbl&gt; NA, 14.0000, NA, NA, 20.0000, NA, 79.0000, 52.3800, 20.37…</span></span>
+<span id="cb8-116"><a href="#cb8-116" tabindex="-1"></a><span class="co">#&gt; $ GsSpLow      &lt;dbl&gt; 42.333333, 5.666667, NA, NA, 10.666667, NA, 46.666667, 30…</span></span>
+<span id="cb8-117"><a href="#cb8-117" tabindex="-1"></a><span class="co">#&gt; $ CourseSchool &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
+<span id="cb8-118"><a href="#cb8-118" tabindex="-1"></a><span class="co">#&gt; $ TurtleJFR    &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
+<span id="cb8-119"><a href="#cb8-119" tabindex="-1"></a><span class="co">#&gt; $ TurtleAge    &lt;chr&gt; NA, NA, &quot;A&quot;, &quot;J&quot;, NA, &quot;A&quot;, NA, NA, NA, NA, NA, NA, NA</span></span>
+<span id="cb8-120"><a href="#cb8-120" tabindex="-1"></a><span class="co">#&gt; $ TurtleCapt   &lt;chr&gt; NA, NA, &quot;N&quot;, &quot;N&quot;, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
+<span id="cb8-121"><a href="#cb8-121" tabindex="-1"></a><span class="co">#&gt; $ PerpDistKm   &lt;dbl&gt; 1.52563078, 3.07580701, 0.04811637, 0.03207758, 0.5185600…</span></span>
+<span id="cb8-122"><a href="#cb8-122" tabindex="-1"></a><span class="co">#&gt; $ included     &lt;lgl&gt; TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FAL…</span></span></code></pre></div>
+<p>Note that <code>das_effort</code> contains several arguments that
+allow for more control over segmentation steps. These arguments include
+<code>seg0.drop</code> (to drop segments of length &lt;=0.1 with no
+sightings), <code>comment.drop</code> (should positions from comment
+events be used when segment chopping), and <code>event.touse</code>
+(which events to use when determining segment lengths). See the function
+documentation (<code>?das_effort</code>) for more details. Additionally,
+for group size calibration work, users can use the
+<code>gs.sp.min1</code> argument to specify if species group size values
+should have a minimum value of 1.</p>
 </div>
 <div id="strata" class="section level2">
 <h2>Strata</h2>
@@ -853,12 +871,12 @@ list then it must be the output of <code>das_effort</code> or
 <code>das_effort_sight</code>, and the function will use the segment
 midpoints to determine if a segment (and associated sightings)
 intersected each stratum.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>stratum.file <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;das_sample_stratum.csv&quot;</span>, <span class="at">package =</span> <span class="st">&quot;swfscDAS&quot;</span>)</span>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>stratum.file <span class="ot">&lt;-</span> <span class="fu">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;das_sample_stratum.csv&quot;</span>, <span class="at">package =</span> <span class="st">&quot;swfscDAS&quot;</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>y.eff.sight.strata <span class="ot">&lt;-</span> <span class="fu">das_intersects_strata</span>(y.eff.sight, <span class="fu">list</span>(<span class="at">InPoly =</span> stratum.file))</span>
 <span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a></span>
 <span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="fu">glimpse</span>(y.eff.sight.strata<span class="sc">$</span>segdata)</span>
 <span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; Rows: 20</span></span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; Columns: 33</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; Columns: 34</span></span>
 <span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; $ segnum           &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16…</span></span>
 <span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt; $ section_id       &lt;int&gt; 1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 4, 4, 5, 6, 6, 7, 7, 8,…</span></span>
 <span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt; $ section_sub_id   &lt;dbl&gt; 1, 1, 2, 1, 2, 3, 4, 5, 6, 7, 1, 2, 1, 1, 2, 1, 2, 1,…</span></span>
@@ -884,14 +902,15 @@ intersected each stratum.</p>
 <span id="cb9-29"><a href="#cb9-29" tabindex="-1"></a><span class="co">#&gt; $ OffsetGMT        &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,…</span></span>
 <span id="cb9-30"><a href="#cb9-30" tabindex="-1"></a><span class="co">#&gt; $ EffType          &lt;chr&gt; &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;…</span></span>
 <span id="cb9-31"><a href="#cb9-31" tabindex="-1"></a><span class="co">#&gt; $ ESWsides         &lt;dbl&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,…</span></span>
-<span id="cb9-32"><a href="#cb9-32" tabindex="-1"></a><span class="co">#&gt; $ maxdistBft       &lt;dbl&gt; 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 3, 3, 3, 3, 2, 3, 2, 2,…</span></span>
-<span id="cb9-33"><a href="#cb9-33" tabindex="-1"></a><span class="co">#&gt; $ maxdistSwellHght &lt;dbl&gt; 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,…</span></span>
-<span id="cb9-34"><a href="#cb9-34" tabindex="-1"></a><span class="co">#&gt; $ maxdistVis       &lt;dbl&gt; 6.0, 6.0, 5.5, 5.5, 6.0, 6.0, 5.5, 4.5, 3.5, 2.5, 5.8…</span></span>
-<span id="cb9-35"><a href="#cb9-35" tabindex="-1"></a><span class="co">#&gt; $ nSI_018          &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</span></span>
-<span id="cb9-36"><a href="#cb9-36" tabindex="-1"></a><span class="co">#&gt; $ ANI_018          &lt;dbl&gt; 42.33333, 0.00000, 0.00000, 0.00000, 0.00000, 0.00000…</span></span>
-<span id="cb9-37"><a href="#cb9-37" tabindex="-1"></a><span class="co">#&gt; $ nSI_076          &lt;dbl&gt; 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</span></span>
-<span id="cb9-38"><a href="#cb9-38" tabindex="-1"></a><span class="co">#&gt; $ ANI_076          &lt;dbl&gt; 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</span></span>
-<span id="cb9-39"><a href="#cb9-39" tabindex="-1"></a><span class="co">#&gt; $ InPoly           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,…</span></span></code></pre></div>
+<span id="cb9-32"><a href="#cb9-32" tabindex="-1"></a><span class="co">#&gt; $ Trackline        &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…</span></span>
+<span id="cb9-33"><a href="#cb9-33" tabindex="-1"></a><span class="co">#&gt; $ maxdistBft       &lt;dbl&gt; 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 3, 3, 3, 3, 2, 3, 2, 2,…</span></span>
+<span id="cb9-34"><a href="#cb9-34" tabindex="-1"></a><span class="co">#&gt; $ maxdistSwellHght &lt;dbl&gt; 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,…</span></span>
+<span id="cb9-35"><a href="#cb9-35" tabindex="-1"></a><span class="co">#&gt; $ maxdistVis       &lt;dbl&gt; 6.0, 6.0, 5.5, 5.5, 6.0, 6.0, 5.5, 4.5, 3.5, 2.5, 5.8…</span></span>
+<span id="cb9-36"><a href="#cb9-36" tabindex="-1"></a><span class="co">#&gt; $ nSI_018          &lt;dbl&gt; 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</span></span>
+<span id="cb9-37"><a href="#cb9-37" tabindex="-1"></a><span class="co">#&gt; $ ANI_018          &lt;dbl&gt; 42.33333, 0.00000, 0.00000, 0.00000, 0.00000, 0.00000…</span></span>
+<span id="cb9-38"><a href="#cb9-38" tabindex="-1"></a><span class="co">#&gt; $ nSI_076          &lt;dbl&gt; 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</span></span>
+<span id="cb9-39"><a href="#cb9-39" tabindex="-1"></a><span class="co">#&gt; $ ANI_076          &lt;dbl&gt; 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…</span></span>
+<span id="cb9-40"><a href="#cb9-40" tabindex="-1"></a><span class="co">#&gt; $ InPoly           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,…</span></span></code></pre></div>
 <p>In addition, you can chop/split effort lines by strata using the
 ‘strata.files’ argument of <code>das_effort</code>. Effort lines are
 chopped/split by strata before then being processed using the specified
@@ -917,7 +936,7 @@ details.</p>
 <span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a></span>
 <span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a><span class="fu">glimpse</span>(y.eff.strata.section<span class="sc">$</span>segdata)</span>
 <span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="co">#&gt; Rows: 10</span></span>
-<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a><span class="co">#&gt; Columns: 34</span></span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a><span class="co">#&gt; Columns: 35</span></span>
 <span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a><span class="co">#&gt; $ segnum         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10</span></span>
 <span id="cb10-20"><a href="#cb10-20" tabindex="-1"></a><span class="co">#&gt; $ section_id     &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10</span></span>
 <span id="cb10-21"><a href="#cb10-21" tabindex="-1"></a><span class="co">#&gt; $ section_sub_id &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1</span></span>
@@ -943,15 +962,16 @@ details.</p>
 <span id="cb10-41"><a href="#cb10-41" tabindex="-1"></a><span class="co">#&gt; $ OffsetGMT      &lt;int&gt; 5, 5, 5, 5, 5, 5, 5, 5, 5, 5</span></span>
 <span id="cb10-42"><a href="#cb10-42" tabindex="-1"></a><span class="co">#&gt; $ EffType        &lt;chr&gt; &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;, &quot;S&quot;</span></span>
 <span id="cb10-43"><a href="#cb10-43" tabindex="-1"></a><span class="co">#&gt; $ ESWsides       &lt;dbl&gt; 2, 2, 2, 2, 2, 2, 2, 2, 2, 2</span></span>
-<span id="cb10-44"><a href="#cb10-44" tabindex="-1"></a><span class="co">#&gt; $ avgBft         &lt;dbl&gt; 3.000000, 3.000000, 2.500835, 3.000000, 3.000000, 2.47…</span></span>
-<span id="cb10-45"><a href="#cb10-45" tabindex="-1"></a><span class="co">#&gt; $ avgSwellHght   &lt;dbl&gt; 3, 3, 3, 3, 3, 3, 3, 3, 1, 1</span></span>
-<span id="cb10-46"><a href="#cb10-46" tabindex="-1"></a><span class="co">#&gt; $ avgHorizSun    &lt;dbl&gt; 2.000000, 2.000000, 2.000000, 12.000000, 8.000000, 8.52…</span></span>
-<span id="cb10-47"><a href="#cb10-47" tabindex="-1"></a><span class="co">#&gt; $ avgVertSun     &lt;dbl&gt; 3, 2, 2, 12, 1, 1, 2, 2, NA, NA</span></span>
-<span id="cb10-48"><a href="#cb10-48" tabindex="-1"></a><span class="co">#&gt; $ avgGlare       &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, NA, NA</span></span>
-<span id="cb10-49"><a href="#cb10-49" tabindex="-1"></a><span class="co">#&gt; $ avgVis         &lt;dbl&gt; 6.000000, 5.686447, 5.090748, 5.974103, 6.000000, 6.000…</span></span>
-<span id="cb10-50"><a href="#cb10-50" tabindex="-1"></a><span class="co">#&gt; $ avgCourse      &lt;dbl&gt; 23.56198, 27.11868, 95.65614, 34.61155, 20.43919, 16.47…</span></span>
-<span id="cb10-51"><a href="#cb10-51" tabindex="-1"></a><span class="co">#&gt; $ avgSpdKt       &lt;dbl&gt; 9.912395, 9.476263, 9.287725, 9.428340, 9.343919, 9.091…</span></span>
-<span id="cb10-52"><a href="#cb10-52" tabindex="-1"></a><span class="co">#&gt; $ stratum        &lt;chr&gt; NA, NA, NA, NA, &quot;Stratum1&quot;, &quot;Stratum1&quot;, &quot;Stratum1&quot;, &quot;St…</span></span></code></pre></div>
+<span id="cb10-44"><a href="#cb10-44" tabindex="-1"></a><span class="co">#&gt; $ Trackline      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA</span></span>
+<span id="cb10-45"><a href="#cb10-45" tabindex="-1"></a><span class="co">#&gt; $ avgBft         &lt;dbl&gt; 3.000000, 3.000000, 2.500835, 3.000000, 3.000000, 2.47…</span></span>
+<span id="cb10-46"><a href="#cb10-46" tabindex="-1"></a><span class="co">#&gt; $ avgSwellHght   &lt;dbl&gt; 3, 3, 3, 3, 3, 3, 3, 3, 1, 1</span></span>
+<span id="cb10-47"><a href="#cb10-47" tabindex="-1"></a><span class="co">#&gt; $ avgHorizSun    &lt;dbl&gt; 2.000000, 2.000000, 2.000000, 12.000000, 8.000000, 8.52…</span></span>
+<span id="cb10-48"><a href="#cb10-48" tabindex="-1"></a><span class="co">#&gt; $ avgVertSun     &lt;dbl&gt; 3, 2, 2, 12, 1, 1, 2, 2, NA, NA</span></span>
+<span id="cb10-49"><a href="#cb10-49" tabindex="-1"></a><span class="co">#&gt; $ avgGlare       &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, NA, NA</span></span>
+<span id="cb10-50"><a href="#cb10-50" tabindex="-1"></a><span class="co">#&gt; $ avgVis         &lt;dbl&gt; 6.000000, 5.686447, 5.090748, 5.974103, 6.000000, 6.000…</span></span>
+<span id="cb10-51"><a href="#cb10-51" tabindex="-1"></a><span class="co">#&gt; $ avgCourse      &lt;dbl&gt; 23.56198, 27.11868, 95.65614, 34.61155, 20.43919, 16.47…</span></span>
+<span id="cb10-52"><a href="#cb10-52" tabindex="-1"></a><span class="co">#&gt; $ avgSpdKt       &lt;dbl&gt; 9.912395, 9.476263, 9.287725, 9.428340, 9.343919, 9.091…</span></span>
+<span id="cb10-53"><a href="#cb10-53" tabindex="-1"></a><span class="co">#&gt; $ stratum        &lt;chr&gt; NA, NA, NA, NA, &quot;Stratum1&quot;, &quot;Stratum1&quot;, &quot;Stratum1&quot;, &quot;St…</span></span></code></pre></div>
 </div>
 <div id="comments" class="section level2">
 <h2>Comments</h2>
@@ -966,17 +986,18 @@ with keywords</p>
 <span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co">#&gt; $ line_num    &lt;int&gt; 71, 81, 186, 218, 241</span></span>
 <span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt; $ comment_str &lt;chr&gt; &quot; Well?              &quot;, &quot; going left to avoid          &quot;, …</span></span>
 <span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a></span>
-<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>y.comm[<span class="fu">str_detect</span>(y.comm<span class="sc">$</span>comment_str, <span class="st">&quot;gear&quot;</span>), ] <span class="co">#Could also use grepl() here</span></span>
-<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="co">#&gt;     Event            DateTime    Lat      Lon OnEffort Cruise Mode OffsetGMT</span></span>
-<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="co">#&gt; 238     C 2013-01-14 11:37:27 41.016 -135.578    FALSE   1000    C         5</span></span>
-<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a><span class="co">#&gt;     EffType ESWsides Course SpdKt Bft SwellHght WindSpdKt RainFog HorizSun</span></span>
-<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a><span class="co">#&gt; 238       S        2     35   9.5   2         1         5       3       NA</span></span>
-<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a><span class="co">#&gt;     VertSun Glare Vis ObsL Rec ObsR ObsInd Data1 Data2 Data3 Data4 Data5 Data6</span></span>
-<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a><span class="co">#&gt; 238      NA    NA   4  149 125  208   &lt;NA&gt;  cros sing  fishi ng ge ar     &lt;NA&gt;</span></span>
-<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a><span class="co">#&gt;     Data7 Data8      Data9 Data10 Data11 Data12 EffortDot EventNum</span></span>
-<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a><span class="co">#&gt; 238  &lt;NA&gt;  &lt;NA&gt;              &lt;NA&gt;   &lt;NA&gt;   &lt;NA&gt;     FALSE       11</span></span>
-<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a><span class="co">#&gt;           file_das line_num                         comment_str</span></span>
-<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a><span class="co">#&gt; 238 das_sample.das      241  crossing fishing gear</span></span></code></pre></div>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>y.comm <span class="sc">|&gt;</span> </span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">str_detect</span>(comment_str, <span class="st">&quot;gear&quot;</span>)) <span class="co">#Could also use grepl() here</span></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="co">#&gt;   Event            DateTime    Lat      Lon OnEffort Cruise Mode OffsetGMT</span></span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a><span class="co">#&gt; 1     C 2013-01-14 11:37:27 41.016 -135.578    FALSE   1000    C         5</span></span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a><span class="co">#&gt;   EffType ESWsides Trackline Course SpdKt Bft SwellHght SwellDir WindSpdKt</span></span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a><span class="co">#&gt; 1       S        2      &lt;NA&gt;     35   9.5   2         1       35         5</span></span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a><span class="co">#&gt;   WindDir RainFog HorizSun VertSun Glare Vis ObsL Rec ObsR ObsInd Data1 Data2</span></span>
+<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a><span class="co">#&gt; 1      40       3       NA      NA    NA   4  149 125  208   &lt;NA&gt;  cros sing </span></span>
+<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a><span class="co">#&gt;   Data3 Data4 Data5 Data6 Data7 Data8      Data9 Data10 Data11 Data12 EffortDot</span></span>
+<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a><span class="co">#&gt; 1 fishi ng ge ar     &lt;NA&gt;  &lt;NA&gt;  &lt;NA&gt;              &lt;NA&gt;   &lt;NA&gt;   &lt;NA&gt;     FALSE</span></span>
+<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a><span class="co">#&gt;   EventNum       file_das line_num                         comment_str</span></span>
+<span id="cb11-20"><a href="#cb11-20" tabindex="-1"></a><span class="co">#&gt; 1       11 das_sample.das      241  crossing fishing gear</span></span></code></pre></div>
 </div>
 
 

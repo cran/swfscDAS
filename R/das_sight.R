@@ -10,35 +10,45 @@
 #' @param return.events character; event codes included in the output.
 #'   Must be one or more of: "S", "K", "M", "G", "s", "k", "m", "g", "t", "p", "F"
 #'   (case-sensitive). The default is all of these event codes
+#' @param gs.sp.min1 logical; flag indicating whether species group size columns
+#'   will be set to a minimum value of 1 (TRUE) or maintain the raw values
+#'   (FALSE, default). See the 'Details' section below
 #'
-#' @details DAS events contain specific information in the 'Data#' columns,
-#'   with the information depending on the event code for that row.
-#'   The output data frame contains columns with this specific information
-#'   extracted to dedicated columns as described below.
-#'   This function recognizes the following types of sightings:
-#'   marine mammal sightings (event codes "S", "K", or "M"),
-#'   marine mammal resights (codes "s", "k", "m"),
-#'   marine mammal subgroup sightings (code "G"),
-#'   marine mammal subgroup resights (code "g"),
-#'   turtle sightings (code "t"),
-#'   pinniped sightings (code "p"),
-#'   and fishing vessel sightings (code "F").
-#'   Warnings are printed if all S, K, M, and G events (and only these events) are not
-#'   followed by an A event and at least one numeric event.
-#'   See \code{\link{das_format_pdf}} for more information about events and event formats.
-#'   Of specific note - sperm whale sightings (species code 046) often contain additional estimates
-#'   recorded as "C" events immediately following the S, A, and numeric events.
-#'   Because these estimates are recorded as"C" events, they are NOT included in the
-#'   \code{das_sight} calculations or output for any \code{return.format}
+#' @details
+#' DAS events contain specific information in the 'Data#' columns, with the
+#' information depending on the event code for that row. The output data frame
+#' contains columns with this specific information extracted to dedicated
+#' columns as described below. This function recognizes the following types of
+#' sightings: marine mammal sightings (event codes "S", "K", or "M"), marine
+#' mammal resights (codes "s", "k", "m"), marine mammal subgroup sightings (code
+#' "G"), marine mammal subgroup resights (code "g"), turtle sightings (code
+#' "t"), pinniped sightings (code "p"), and fishing vessel sightings (code "F").
+#' Warnings are printed if all S, K, M, and G events (and only these events) are
+#' not followed by an A event and at least one numeric event. See
+#' \code{\link{das_format_pdf}} for more information about events and event
+#' formats. Of specific note - sperm whale sightings (species code 046) often
+#' contain additional estimates recorded as "C" events immediately following the
+#' S, A, and numeric events. Because these estimates are recorded as"C" events,
+#' they are NOT included in the \code{das_sight} calculations or output for any
+#' \code{return.format}
 #'
-#'   The \code{return.events} argument simply provides a shortcut for
-#'   filtering the output of \code{das_sight} by event codes
+#' The \code{return.events} argument simply provides a shortcut for filtering
+#' the output of \code{das_sight} by event codes
 #'
-#'   Abbreviations used in output column names: Gs = group size, Sp = species,
-#'   Nm = nautical mile, Perc = percentage, Prob = probable,
-#'   GsSchool = school-level group size info
+#' Abbreviations used in output column names: Gs = group size, Sp = species, Nm
+#' = nautical mile, Perc = percentage, Prob = probable, GsSchool = school-level
+#' group size info, GsSp = species-level group size info.
 #'
-#'   This function makes the following assumptions, and alterations to the raw DAS data:
+#' Species group sizes are calculated as the product of the arithmetic mean of
+#' the corresponding school group size and the species percentage. These values
+#' are reported in 'GsSp...' columns for 'default' and 'wide' output formats.
+#' Sometimes, however, these species group size estimates may be less than 1,
+#' depending on how the means work out across different observers. If
+#' \code{gs.sp.min1} is \code{TRUE}, any values in 'GsSp...' columns that are
+#' less than 1 are set to 1, via e.g. \code{\link{pmin}(GsSpBest, 1)}
+#'
+#' This function makes the following assumptions, and alterations to the raw DAS
+#' data:
 #'   \itemize{
 #'     \item "A" events immediately following an S/K/M/G event have
 #'     the same sighting number (Data1 value) as the S/K/M/G event
@@ -57,16 +67,18 @@
 #'       'TurtleAge', and 'TurtleCapt'
 #'   }
 #'
-#' @return Data frame with 1) the columns from \code{x}, excluding the 'Data#' columns,
-#'   and 2) columns with sighting information extracted from 'Data#' columns.
-#'   See \code{\link{das_format_pdf}} for more information the sighting information.
-#'   If \code{return.format} is "default", then there is one row for each species of each sighting event;
-#'   if \code{return.format} is "wide", then there is one row for each sighting event;
-#'   if \code{return.format} is "complete", then there is one row for every
-#'   group size estimate for each sighting event (excluding sperm whale "C" events - see the Details section).
+#' @return
+#' Data frame with 1) the columns from \code{x}, excluding the 'Data#' columns,
+#' and 2) columns with sighting information extracted from 'Data#' columns. See
+#' \code{\link{das_format_pdf}} for more information the sighting information.
+#' If \code{return.format} is "default", then there is one row for each species
+#' of each sighting event; if \code{return.format} is "wide", then there is one
+#' row for each sighting event; if \code{return.format} is "complete", then
+#' there is one row for every group size estimate for each sighting event
+#' (excluding sperm whale "C" events - see the Details section).
 #'
-#'   The format-specific columns are described in their respective sections.
-#'   The following sighting information columns are included in all return formats:
+#' The format-specific columns are described in their respective sections. The
+#' following sighting information columns are included in all return formats:
 #'
 #'   \tabular{lll}{
 #'     \emph{Sighting information}                \tab \emph{Column name} \tab \emph{Notes} \cr
@@ -97,26 +109,31 @@
 #'     Perpendicular distance (km) to sighting    \tab PerpDistKm   \tab Calculated via \code{(abs(sin(Bearing*pi/180) * DistNm) * 1.852)}
 #'   }
 #'
-#'   SightNoDaily is a running count of the number of S/K/M/G sightings that occurred on each day.
-#'   It is formatted as 'YYYYMMDD'_'running count', e.g. "20050101_1".
+#' SightNoDaily is a running count of the number of S/K/M/G sightings that
+#' occurred on each day. It is formatted as 'YYYYMMDD'_'running count', e.g.
+#' "20050101_1".
 #'
-#'   The GsSchoolBest, GsSchoolHigh, and GsSchoolLow columns are either:
-#'   1) the arithmetic mean across observer estimates, for the "default" and "wide" formats, or
-#'   2) the individual observer estimates, for the "complete" format.
-#'   Note that for non-"complete" formats, \code{na.rm = TRUE} is used when calculating the mean,
-#'   and thus blank elements of estimates (but not the whole incomplete estimate) are ignored.
+#' The GsSchoolBest, GsSchoolHigh, and GsSchoolLow columns are either: 1) the
+#' arithmetic mean across observer estimates, for the "default" and "wide"
+#' formats, or 2) the individual observer estimates, for the "complete" format.
+#' Note that for non-"complete" formats, \code{na.rm = TRUE} is used when
+#' calculating the mean, and thus blank elements of estimates (but not the whole
+#' incomplete estimate) are ignored.
 #'
-#'   To convert the perpendicular distance back to nautical miles,
-#'   one would divide PerpDistKm by 1.852
+#' To convert the perpendicular distance back to nautical miles, one would
+#' divide PerpDistKm by 1.852
 #'
 #' @section The "default" format output:
-#'   This output data frame contains 'long' sighting data, meaning there is one row for each species of each sighting event.
-#'   The GsSp... columns are calculated as follows:
-#'   for each species and for each observer estimate, the best/high/low school size estimate is multiplied by the applicable species percent estimate.
-#'   The values are grouped by species and then averaged to get single GsSpBest, GsSpHigh, and GsSpLow values for each species.
-#'   (using \code{\link[base]{mean}} with \code{na.rm = TRUE})
+#' This output data frame contains 'long' sighting data, meaning there is one
+#' row for each species of each sighting event. The GsSp... columns are
+#' calculated as follows: for each species and for each observer estimate, the
+#' best/high/low school size estimate is multiplied by the applicable species
+#' percent estimate. The values are grouped by species and then averaged to get
+#' single GsSpBest, GsSpHigh, and GsSpLow values for each species. (using
+#' \code{\link[base]{mean}} with \code{na.rm = TRUE})
 #'
-#'   Sighting information columns/formats present specifically in the "default" format output:
+#' Sighting information columns/formats present specifically in the "default"
+#' format output:
 #'   \tabular{lll}{
 #'     \emph{Sighting information} \tab \emph{Column name} \tab \emph{Notes}\cr
 #'     Species code          \tab SpCode \tab Boat type or mammal, turtle, or pinniped species codes\cr
@@ -129,24 +146,26 @@
 #'       The product of the arithmetic means of GsSchoolLow and the corresponding species percentage\cr
 #'   }
 #'
-#'   Note that for the above calculations,
-#'   the GsSchoolX value and corresponding species percentages were each
-#'   averaged across observers, using \code{na.rm = TRUE},
-#'   before being multiplied to calculate GsSpX. For example, in the workflow:
-#'   \code{GsSpBest1 = mean(.data$Data2, na.rm = TRUE) * mean(.data$Data5, na.rm = TRUE)}
+#' Note that for the above calculations, the GsSchoolX value and corresponding
+#'   species percentages were each averaged across observers, using \code{na.rm
+#'   = TRUE}, before being multiplied to calculate GsSpX. For example, in the
+#'   workflow: \code{GsSpBest1 = mean(.data$Data2, na.rm = TRUE) *
+#'   mean(.data$Data5, na.rm = TRUE)}
 #'
 #' @section The "wide" and "complete" format outputs:
-#'   The "wide" and "complete" options have very similar columns in their output date frames.
-#'   There are two main differences: 1) the "wide" format has one row for each sighting event,
-#'   while the complete format has a row for every observer estimate for each sightings, and thus
-#'   2) in the "wide" format, all numeric information for which there are multiple observer estimates
-#'   (school group size, species percentage, etc.) are averaged across estimated via
-#'   an arithmetic mean (using \code{\link[base]{mean}} with \code{na.rm = TRUE})
+#' The "wide" and "complete" options have very similar columns in their output
+#' date frames. There are two main differences: 1) the "wide" format has one row
+#' for each sighting event, while the complete format has a row for every
+#' observer estimate for each sightings, and thus 2) in the "wide" format, all
+#' numeric information for which there are multiple observer estimates (school
+#' group size, species percentage, etc.) are averaged across estimated via an
+#' arithmetic mean (using \code{\link[base]{mean}} with \code{na.rm = TRUE})
 #'
-#'   With these formats, note that the species/type code and group size for
-#'   turtle, pinniped, and boat sightings are in their own column
+#' With these formats, note that the species/type code and group size for
+#' turtle, pinniped, and boat sightings are in their own column
 #'
-#'   Sighting information columns present in the "wide" and "complete" format outputs:
+#' Sighting information columns present in the "wide" and "complete" format
+#' outputs:
 #'   \tabular{lll}{
 #'     \emph{Sighting information}  \tab \emph{Column name}  \tab \emph{Notes}                            \cr
 #'     Observer code - estimate     \tab ObsEstimate         \tab See below                               \cr
@@ -175,16 +194,16 @@
 #'     Number of boats              \tab BoatGs              \tab \code{NA} for non-"F" events
 #'   }
 #'
-#'   ObsEstimate refers to the code of the observer that made the corresponding estimate.
-#'   For the "wide" format, ObsEstimate is a list-column of all of the observer codes
-#'   that provided an estimate.
-#'   Also in the "wide" format, the GsSpBest# columns are the product of
-#'   the means of GsSchoolBest and the corresponding species percentage
-#'   (see the Default section for calculation details).
-#'   These numbers, 1 to 4, correspond to the order of the data as it appears in the DAS file
+#' ObsEstimate refers to the code of the observer that made the corresponding
+#' estimate. For the "wide" format, ObsEstimate is a list-column of all of the
+#' observer codes that provided an estimate. Also in the "wide" format, the
+#' GsSpBest# columns are the product of the means of GsSchoolBest and the
+#' corresponding species percentage (see the Default section for calculation
+#' details). These numbers, 1 to 4, correspond to the order of the data as it
+#' appears in the DAS file
 #'
 #' @examples
-#' y <- system.file("das_sample.das", package = "swfscDAS")
+#' y <- system.file("extdata", "das_sample.das", package = "swfscDAS")
 #' y.proc <- das_process(y)
 #'
 #' das_sight(y.proc)
@@ -203,9 +222,13 @@ das_sight.data.frame <- function(x, ...) {
 
 #' @name das_sight
 #' @export
-das_sight.das_df <- function(x, return.format = c("default", "wide", "complete"),
-                             return.events = c("S", "K", "M", "G", "s", "k", "m", "g", "t", "p", "F"),
-                             ...) {
+das_sight.das_df <- function(
+    x,
+    return.format = c("default", "wide", "complete"),
+    return.events = c("S", "K", "M", "G", "s", "k", "m", "g", "t", "p", "F"),
+    gs.sp.min1 = FALSE,
+    ...
+) {
   mean_narm <- function(i) mean(i, na.rm = TRUE)
 
   #----------------------------------------------------------------------------
@@ -218,8 +241,9 @@ das_sight.das_df <- function(x, return.format = c("default", "wide", "complete")
   event.sight <- c("S", "K", "M", "G", "s", "k", "m", "g", "t", "p", "F")
   event.sight.info <- c("A", "?", 1:8)
 
-  sight.df <- x %>%
-    filter(.data$Event %in% c(event.sight, event.sight.info)) %>%
+  # browser()
+  sight.df <- x |>
+    filter(.data$Event %in% c(event.sight, event.sight.info)) |>
     mutate(sight_cumsum = cumsum(.data$Event %in% event.sight))
 
 
@@ -252,8 +276,8 @@ das_sight.das_df <- function(x, return.format = c("default", "wide", "complete")
   #--------------------------------------------------------
   ### Data that is in all sighting events
   # SightNo is left as character because of entries such as "408A"
-  sight.info.all <- sight.df %>%
-    filter(.data$Event %in% event.sight) %>%
+  sight.info.all <- sight.df |>
+    filter(.data$Event %in% event.sight) |>
     mutate(SightNo = case_when(.data$Event %in% c("S", "K", "M") ~ .data$Data1,
                                .data$Event %in% c("G", "g") ~ .data$Data1,
                                .data$Event %in% c("s", "k", "m") ~ .data$Data1),
@@ -290,33 +314,33 @@ das_sight.das_df <- function(x, return.format = c("default", "wide", "complete")
                .data$Event == "g" ~ .data$Data4,
                .data$Event == "t" ~ .data$Data4,
                .data$Event == "p" ~ .data$Data4,
-               .data$Event == "F" ~ .data$Data3))) %>%
-    group_by(day(.data$DateTime)) %>%
+               .data$Event == "F" ~ .data$Data3))) |>
+    group_by(day(.data$DateTime)) |>
     mutate(SightNoDaily = paste(base::format(.data$DateTime, "%Y%m%d"),
                                 cumsum(.data$Event %in% c("S", "K", "M", "G")),
                                 sep = "_"),
            SightNoDaily = if_else(.data$Event %in% c("S", "K", "M", "G"),
-                                  .data$SightNoDaily, NA_character_)) %>%
-    ungroup() %>%
+                                  .data$SightNoDaily, NA_character_)) |>
+    ungroup() |>
     select("sight_cumsum", "SightNo", "Subgroup", "SightNoDaily",
            "Obs", "ObsStd", "Bearing", "Reticle", "DistNm")
 
 
   #--------------------------------------------------------
   ### Marine mammal (+subgroup) sightings; Events S, K, M, G
-  sight.info.skmg1 <- sight.df %>%
-    filter(.data$Event %in% c("S", "K", "M", "G")) %>%
+  sight.info.skmg1 <- sight.df |>
+    filter(.data$Event %in% c("S", "K", "M", "G")) |>
     mutate(Cue = if_else(.data$Event == "G", NA_real_, as.numeric(.data$Data3)),
            Method = as.numeric(.data$Data4),
            CalibSchool = toupper(.data$Data10),
            PhotosAerial = toupper(.data$Data11),
-           Biopsy = toupper(.data$Data12)) %>%
+           Biopsy = toupper(.data$Data12)) |>
     select("sight_cumsum", "Cue", "Method",
            "CalibSchool", "PhotosAerial", "Biopsy")
 
   # Data from A row
-  sight.info.skmg2 <- sight.df %>%
-    filter(.data$Event =="A") %>%
+  sight.info.skmg2 <- sight.df |>
+    filter(.data$Event =="A") |>
     mutate(Photos = toupper(.data$Data3),
            Birds = toupper(.data$Data4),
            nSp = unlist(
@@ -324,15 +348,15 @@ das_sight.das_df <- function(x, return.format = c("default", "wide", "complete")
                       function(d5, d6, d7, d8) {
                         sum(!is.na(c(d5, d6, d7, d8)))
                       })),
-           Mixed = .data$nSp > 1) %>%
+           Mixed = .data$nSp > 1) |>
     select("sight_cumsum", "Photos", "Birds", "nSp", "Mixed",
            SpCode1 = "Data5", SpCode2 = "Data6",
            SpCode3 = "Data7", SpCode4 = "Data8")
 
   # Data from ? row, if any
-  sight.info.skmg3 <- sight.df %>%
-    filter(.data$Event %in% c("?")) %>%
-    group_by(.data$sight_cumsum) %>%
+  sight.info.skmg3 <- sight.df |>
+    filter(.data$Event %in% c("?")) |>
+    group_by(.data$sight_cumsum) |>
     reframe(Prob = TRUE,
             SpCodeProb1 = .data$Data5, SpCodeProb2 = .data$Data6,
             SpCodeProb3 = .data$Data7, SpCodeProb4 = .data$Data8)
@@ -340,27 +364,27 @@ das_sight.das_df <- function(x, return.format = c("default", "wide", "complete")
 
   # Data from numeric events (groupsize and composition estimates)
   sight.info.skmg4 <- if (return.format == "complete") {
-    sight.df %>%
-      filter(.data$Event %in% as.character(1:8)) %>%
+    sight.df |>
+      filter(.data$Event %in% as.character(1:8)) |>
       mutate(SpPerc1 = as.numeric(.data$Data5),
              SpPerc2 = as.numeric(.data$Data6),
              SpPerc3 = as.numeric(.data$Data7),
              SpPerc4 = as.numeric(.data$Data8),
              GsSchoolBest = as.numeric(.data$Data2),
              GsSchoolHigh = as.numeric(.data$Data3),
-             GsSchoolLow = as.numeric(.data$Data4)) %>%
+             GsSchoolLow = as.numeric(.data$Data4)) |>
       select("sight_cumsum", ObsEstimate = "Data1",
              "SpPerc1", "SpPerc2", "SpPerc3", "SpPerc4",
              "GsSchoolBest", "GsSchoolHigh", "GsSchoolLow")
 
   } else {
-    sight.df %>%
-      filter(.data$Event %in% as.character(1:8)) %>%
+    sight.df |>
+      filter(.data$Event %in% as.character(1:8)) |>
       mutate(Data2 = as.numeric(.data$Data2), Data3 = as.numeric(.data$Data3),
              Data4 = as.numeric(.data$Data4), Data5 = as.numeric(.data$Data5),
              Data6 = as.numeric(.data$Data6), Data7 = as.numeric(.data$Data7),
-             Data8 = as.numeric(.data$Data8)) %>%
-      group_by(.data$sight_cumsum) %>%
+             Data8 = as.numeric(.data$Data8)) |>
+      group_by(.data$sight_cumsum) |>
       reframe(ObsEstimate = list(.data$Data1),
               SpPerc1 = mean_narm(.data$Data5),
               SpPerc2 = mean_narm(.data$Data6),
@@ -405,11 +429,11 @@ das_sight.das_df <- function(x, return.format = c("default", "wide", "complete")
     sum(duplicated(sight.info.skmg3$sight_cumsum)) == 0
   )
 
-  sight.info.skmg <- sight.info.skmg1 %>%
-    left_join(sight.info.skmg2, by = "sight_cumsum") %>%
-    left_join(sight.info.skmg3, by = "sight_cumsum") %>%
-    left_join(sight.info.skmg4, by = "sight_cumsum") %>%
-    mutate(Prob = ifelse(is.na(.data$Prob), FALSE, .data$Prob)) %>%
+  sight.info.skmg <- sight.info.skmg1 |>
+    left_join(sight.info.skmg2, by = "sight_cumsum") |>
+    left_join(sight.info.skmg3, by = "sight_cumsum") |>
+    left_join(sight.info.skmg4, by = "sight_cumsum") |>
+    mutate(Prob = ifelse(is.na(.data$Prob), FALSE, .data$Prob)) |>
     select("sight_cumsum", "Cue", "Method", "Photos", "Birds", "CalibSchool",
            "PhotosAerial", "Biopsy", "Prob", "nSp", "Mixed", "ObsEstimate",
            starts_with("SpCode"), starts_with("SpCodeProb"),
@@ -423,40 +447,40 @@ das_sight.das_df <- function(x, return.format = c("default", "wide", "complete")
 
   #--------------------------------------------------------
   ### Marine mammal (+subgroup) resights; Events s, k, m
-  sight.info.resight <- sight.df %>%
-    filter(.data$Event %in% c("s", "k", "m")) %>%
-    mutate(CourseSchool = as.numeric(.data$Data5)) %>%
+  sight.info.resight <- sight.df |>
+    filter(.data$Event %in% c("s", "k", "m")) |>
+    mutate(CourseSchool = as.numeric(.data$Data5)) |>
     select("sight_cumsum", "CourseSchool")
 
 
   #--------------------------------------------------------
   ### Turtle sightings; Events t
-  sight.info.t <- sight.df %>%
-    filter(.data$Event == "t") %>%
+  sight.info.t <- sight.df |>
+    filter(.data$Event == "t") |>
     mutate(TurtleSp = .data$Data2,
            TurtleGs = as.numeric(.data$Data5),
            TurtleJFR = .data$Data6,
            TurtleAge = toupper(.data$Data8),
-           TurtleCapt = toupper(.data$Data9)) %>%
+           TurtleCapt = toupper(.data$Data9)) |>
     select("sight_cumsum", "TurtleSp", "TurtleGs",
            "TurtleJFR", "TurtleAge", "TurtleCapt")
 
 
   #--------------------------------------------------------
   ### Pinnipeds; event p
-  sight.info.p <- sight.df %>%
-    filter(.data$Event == "p") %>%
+  sight.info.p <- sight.df |>
+    filter(.data$Event == "p") |>
     mutate(PinnipedSp = .data$Data2,
-           PinnipedGs = as.numeric(.data$Data5)) %>%
+           PinnipedGs = as.numeric(.data$Data5)) |>
     select("sight_cumsum", "PinnipedSp", "PinnipedGs")
 
 
   #--------------------------------------------------------
   ### Fishing boats; Events F
-  sight.info.f <- sight.df %>%
-    filter(.data$Event == "F") %>%
+  sight.info.f <- sight.df |>
+    filter(.data$Event == "F") |>
     mutate(BoatType = .data$Data5,
-           BoatGs = as.numeric(.data$Data6)) %>%
+           BoatGs = as.numeric(.data$Data6)) |>
     select("sight_cumsum", "BoatType", "BoatGs")
 
 
@@ -465,16 +489,16 @@ das_sight.das_df <- function(x, return.format = c("default", "wide", "complete")
 
   #--------------------------------------------------------
   ### Formatting for all options - now done for wide and complete
-  to.return <- sight.df %>%
-    filter(.data$Event %in% event.sight) %>%
+  to.return <- sight.df |>
+    filter(.data$Event %in% event.sight) |>
     select(-c("Data1", "Data2", "Data3", "Data4", "Data5", "Data6",
-              "Data7", "Data8", "Data9", "Data10", "Data11", "Data12")) %>%
-    left_join(sight.info.all, by = "sight_cumsum") %>%
-    left_join(sight.info.skmg, by = "sight_cumsum") %>%
-    left_join(sight.info.resight, by = "sight_cumsum") %>%
-    left_join(sight.info.t, by = "sight_cumsum") %>%
-    left_join(sight.info.p, by = "sight_cumsum") %>%
-    left_join(sight.info.f, by = "sight_cumsum") %>%
+              "Data7", "Data8", "Data9", "Data10", "Data11", "Data12")) |>
+    left_join(sight.info.all, by = "sight_cumsum") |>
+    left_join(sight.info.skmg, by = "sight_cumsum") |>
+    left_join(sight.info.resight, by = "sight_cumsum") |>
+    left_join(sight.info.t, by = "sight_cumsum") |>
+    left_join(sight.info.p, by = "sight_cumsum") |>
+    left_join(sight.info.f, by = "sight_cumsum") |>
     select(-"sight_cumsum")
 
 
@@ -484,9 +508,9 @@ das_sight.das_df <- function(x, return.format = c("default", "wide", "complete")
     # Split multi-species sightings into multiple rows as necessary
     to.return$idx <- seq_len(nrow(to.return))
 
-    to.return.multi <- to.return %>%
-      filter(.data$Event %in% c("S", "K", "M", "G")) %>%
-      group_by(.data$idx) %>%
+    to.return.multi <- to.return |>
+      filter(.data$Event %in% c("S", "K", "M", "G")) |>
+      group_by(.data$idx) |>
       summarise(Sp1_list = list(c(.data$SpCode1, .data$SpCodeProb1, .data$GsSpBest1,
                                   .data$GsSpHigh1, .data$GsSpLow1)),
                 Sp2_list = list(c(.data$SpCode2, .data$SpCodeProb2, .data$GsSpBest2,
@@ -494,17 +518,17 @@ das_sight.das_df <- function(x, return.format = c("default", "wide", "complete")
                 Sp3_list = list(c(.data$SpCode3, .data$SpCodeProb3, .data$GsSpBest3,
                                   .data$GsSpHigh3, .data$GsSpLow3)),
                 Sp4_list = list(c(.data$SpCode4, .data$SpCodeProb4, .data$GsSpBest4,
-                                  .data$GsSpHigh4, .data$GsSpLow4))) %>%
+                                  .data$GsSpHigh4, .data$GsSpLow4))) |>
       pivot_longer(c("Sp1_list", "Sp2_list", "Sp3_list", "Sp4_list"),
                    names_to = "sp_list_name", values_to = "sp_list",
-                   values_drop_na = TRUE) %>%
+                   values_drop_na = TRUE) |>
       mutate(SpCode = map_chr(.data$sp_list, function(i) i[1]),
              SpCodeProb = map_chr(.data$sp_list, function(i) i[2]),
              GsSpBest = as.numeric(map_chr(.data$sp_list, function(i) i[3])),
              GsSpHigh = as.numeric(map_chr(.data$sp_list, function(i) i[4])),
-             GsSpLow = as.numeric(map_chr(.data$sp_list, function(i) i[5]))) %>%
-      filter(!is.na(.data$SpCode)) %>%
-      select("idx", "SpCode", "SpCodeProb", "GsSpBest", "GsSpHigh", "GsSpLow") %>%
+             GsSpLow = as.numeric(map_chr(.data$sp_list, function(i) i[5]))) |>
+      filter(!is.na(.data$SpCode)) |>
+      select("idx", "SpCode", "SpCodeProb", "GsSpBest", "GsSpHigh", "GsSpLow") |>
       arrange(.data$idx)
 
     # Names and order of columns to return
@@ -520,16 +544,16 @@ das_sight.das_df <- function(x, return.format = c("default", "wide", "complete")
     )
 
     # Finalize return data frame, consolidating columns as possible
-    to.return <- to.return %>%
+    to.return <- to.return |>
       select(-c("SpCode1", "SpCode2", "SpCode3", "SpCode4",
                 "SpCodeProb1", "SpCodeProb2", "SpCodeProb3", "SpCodeProb4",
                 "SpPerc1", "SpPerc2", "SpPerc3", "SpPerc4",
                 "GsSpBest1", "GsSpBest2", "GsSpBest3", "GsSpBest4",
                 "GsSpHigh1", "GsSpHigh2", "GsSpHigh3", "GsSpHigh4",
-                "GsSpLow1", "GsSpLow2", "GsSpLow3", "GsSpLow4")) %>%
-      full_join(to.return.multi, by = "idx") %>%
-      arrange(.data$idx) %>%
-      select(!!sight.names) %>%
+                "GsSpLow1", "GsSpLow2", "GsSpLow3", "GsSpLow4")) |>
+      full_join(to.return.multi, by = "idx") |>
+      arrange(.data$idx) |>
+      select(!!sight.names) |>
       mutate(SpCode = case_when(.data$Event %in% c("S", "K", "M", "G") ~ .data$SpCode,
                                 .data$Event == "t" ~ .data$TurtleSp,
                                 .data$Event == "p" ~ .data$PinnipedSp,
@@ -541,15 +565,20 @@ das_sight.das_df <- function(x, return.format = c("default", "wide", "complete")
                                       .data$Event == "F" ~ .data$BoatGs,
                                       TRUE ~ NA_real_),
              GsSpBest = if_else(.data$Event %in% c("t", "p", "F"),
-                                .data$GsSchoolBest, .data$GsSpBest)) %>%
+                                .data$GsSchoolBest, .data$GsSpBest)) |>
       select(-c("TurtleSp", "TurtleGs", "PinnipedSp", "PinnipedGs",
                 "BoatType", "BoatGs"))
   }
 
 
   #--------------------------------------------------------
-  ### Calculate perp dist and return
-  to.return %>%
-    mutate(PerpDistKm = abs(sin(.data$Bearing*pi/180) * .data$DistNm) * 1.852) %>%
+  ### Calculate perp dist, adjust GsSp..., and return
+  if (gs.sp.min1) {
+    to.return <- to.return |>
+      mutate(across(starts_with("GsSp"), ~ pmax(.x, 1)))
+  }
+
+  to.return |>
+    mutate(PerpDistKm = abs(sin(.data$Bearing*pi/180) * .data$DistNm) * 1.852) |>
     filter(.data$Event %in% return.events)
 }
